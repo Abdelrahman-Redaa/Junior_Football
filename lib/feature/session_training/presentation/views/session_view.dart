@@ -1,0 +1,106 @@
+import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:junior_football/core/utilities/spaces.dart';
+import 'package:junior_football/core/utilities/theme_extension.dart';
+
+import '../../../ai/presentation/widget/video_player.dart';
+
+class SessionView extends StatefulWidget {
+  const SessionView({super.key});
+
+  @override
+  State<SessionView> createState() => _SessionViewState();
+}
+
+class _SessionViewState extends State<SessionView> {
+  final List<String> _videoUrls = [
+    'https://footballfc.runasp.net/uploads/videos/21db6443-5d9c-4b6b-bf44-20e1074237fe.mp4',
+    'https://footballfc.runasp.net/uploads/videos/0a96d26c-169b-4d50-be6a-796601a8cac5.mp4',
+    'https://footballfc.runasp.net/uploads/videos/15003242-488c-47de-a470-a607a7a45971.mp4',
+  ];
+  late var randomUrl = _videoUrls[Random().nextInt(_videoUrls.length)];
+
+  @override
+  void initState() {
+    print(randomUrl);
+    super.initState();
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    return Scaffold(
+      appBar: AppBar(title: const Text("speed session")),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            AspectRatio(
+              aspectRatio: 393 / 217,
+              child:     // Pick a random video URL
+              VideoPlayerWidget(videoUrl:randomUrl ,),
+            ),
+            const VerticalSpace(38),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSpeedTraining(context),
+                  const VerticalSpace(32),
+                  Text("Instructions", style: theme.medium14),
+                  const VerticalSpace(20),
+                  _buildInstructions(context),
+                  const VerticalSpace(100),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInstructions(BuildContext context) {
+    final theme = context.appTheme;
+    final listOfInstructions = [
+      "Stand on the balls of your feet, lean your upper body slightly forward and keep your eyes focused straight ahead.",
+      "Sprint at maximum speed for 10–20 meters, keep your body upright and stable and use your arms for power (strong arm swings).",
+      "Jog or walk back to the starting point and take a deep breath before starting the next rep.",
+    ];
+    return Column(
+      children: List.generate(
+        listOfInstructions.length,
+        (index) => Padding(
+          padding: const EdgeInsets.only(bottom: 32),
+          child: ListTile(
+            title: Text(listOfInstructions[index], style: theme.regular14),
+            leading: CircleAvatar(
+              backgroundColor: const Color(0xffE9F2EB),
+              child: Text(
+                (index + 1).toString(),
+                style: theme.regular14.copyWith(color: theme.primary),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSpeedTraining(BuildContext context) {
+    final theme = context.appTheme;
+    return Row(
+      children: [
+        Text("Speed training", style: theme.semiBold24),
+        const Spacer(),
+        Icon(Icons.access_time_filled_outlined, color: theme.neutral),
+        const HorizontalSpace(5),
+        Text(
+          "45mins/ 3rounds",
+          style: theme.medium14.copyWith(color: theme.neutral),
+        ),
+      ],
+    );
+  }
+}

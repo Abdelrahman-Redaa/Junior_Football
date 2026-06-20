@@ -1,0 +1,31 @@
+{
+  "errors": {
+    "connectionTimeout": "Connection timeout with server",
+    "sendTimeout": "Send timeout in connection with server",
+    "receiveTimeout": "Receive timeout in connection with server",
+    "badCertificate": "Bad certificate",
+    "cancel": "Request to server was cancelled",
+    "connectionError": "No internet connection",
+    "unknown": "Something went wrong",
+    "error400": "Bad request",
+    "error401": "Unauthorized: ",
+    "error403": "Forbidden access",
+    "error408": "Request timeout",
+    "error429": "Too many requests. Please slow down",
+    "error500": "Internal server error",
+    "error502": "Bad gateway",
+    "error503": "Service unavailable",
+    "error504": "Gateway timeout",
+    "defaultError": "Unexpected error occurred",
+    "permissionDenied": "You do not have permission",
+    "serviceUnavailable": "Service is unavailable",
+    "timeout": "The operation timed out",
+    "notFound": "Resource not found",
+    "alreadyExists": "The item already exists",
+    "unauthenticated": "Please login to continue",
+    "cancelled": "Operation cancelled",
+    "resourceExhausted": "Quota exceeded",
+    "aborted": "Operation aborted",
+    "internal": "Internal error"
+  }
+}
