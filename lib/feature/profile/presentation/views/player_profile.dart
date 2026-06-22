@@ -6,11 +6,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:junior_football/core/constants/app_assets.dart';
 import 'package:junior_football/core/di/di.dart';
+import 'package:junior_football/feature/ai/presentation/widget/video_player.dart';
 import 'package:junior_football/feature/profile/presentation/view_model/profile_state.dart';
 import 'package:junior_football/feature/profile/presentation/view_model/profile_view_model.dart';
 
 class PlayerProfileView extends StatefulWidget {
-  const PlayerProfileView({super.key});
+  const PlayerProfileView({super.key, this.userId});
+
+  final String? userId;
 
   @override
   State<PlayerProfileView> createState() => _PlayerProfileViewState();
@@ -41,10 +44,19 @@ class _PlayerProfileViewState extends State<PlayerProfileView> {
       ),
       body: SafeArea(
         child: BlocProvider(
-          create: (context) =>
-              getIt.get<ProfileViewModel>()..doIntent(GetProfileIntent()),
+          create: (context) {
+            final viewModel = getIt.get<ProfileViewModel>();
+            final userId = widget.userId;
+            viewModel.doIntent(
+              userId == null || userId.isEmpty
+                  ? GetProfileIntent()
+                  : GetProfileByIdIntent(userId: userId),
+            );
+            return viewModel;
+          },
           child: BlocBuilder<ProfileViewModel, ProfileState>(
             builder: (context, state) {
+              final isCurrentUserProfile = widget.userId == null;
               if (state.profile.isLoading) {
                 return const Center(child: CircularProgressIndicator());
               }
@@ -58,9 +70,14 @@ class _PlayerProfileViewState extends State<PlayerProfileView> {
                       ),
                       SizedBox(height: 12.h),
                       ElevatedButton(
-                        onPressed: () => context
-                            .read<ProfileViewModel>()
-                            .doIntent(GetProfileIntent()),
+                        onPressed: () {
+                          final userId = widget.userId;
+                          context.read<ProfileViewModel>().doIntent(
+                            userId == null || userId.isEmpty
+                                ? GetProfileIntent()
+                                : GetProfileByIdIntent(userId: userId),
+                          );
+                        },
                         child: const Text('Retry'),
                       ),
                     ],
@@ -83,7 +100,9 @@ class _PlayerProfileViewState extends State<PlayerProfileView> {
                         children: [
                           SizedBox(height: 12.h),
                           GestureDetector(
-                            onTap: () => _pickProfileImage(context),
+                            onTap: isCurrentUserProfile
+                                ? () => _pickProfileImage(context)
+                                : null,
                             child: Stack(
                               alignment: Alignment.center,
                               children: [
@@ -182,40 +201,42 @@ class _PlayerProfileViewState extends State<PlayerProfileView> {
                             ],
                           ),
                           SizedBox(height: 12.h),
-                          ElevatedButton.icon(
-                            onPressed:
-                                profile.userId == null ||
-                                    state.followAction.isLoading
-                                ? null
-                                : () {
-                                    final intent = isFollowing
-                                        ? UnfollowUserIntent(
-                                            userId: profile.userId!,
-                                          )
-                                        : FollowUserIntent(
-                                            userId: profile.userId!,
-                                          );
-                                    context.read<ProfileViewModel>().doIntent(
-                                      intent,
-                                    );
-                                  },
-                            icon: state.followAction.isLoading
-                                ? SizedBox(
-                                    width: 16.r,
-                                    height: 16.r,
-                                    child: const CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
+                          if (!isCurrentUserProfile) ...[
+                            ElevatedButton.icon(
+                              onPressed:
+                                  profile.userId == null ||
+                                      state.followAction.isLoading
+                                  ? null
+                                  : () {
+                                      final intent = isFollowing
+                                          ? UnfollowUserIntent(
+                                              userId: profile.userId!,
+                                            )
+                                          : FollowUserIntent(
+                                              userId: profile.userId!,
+                                            );
+                                      context.read<ProfileViewModel>().doIntent(
+                                        intent,
+                                      );
+                                    },
+                              icon: state.followAction.isLoading
+                                  ? SizedBox(
+                                      width: 16.r,
+                                      height: 16.r,
+                                      child: const CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Icon(
+                                      isFollowing
+                                          ? Icons.person_remove_alt_1_outlined
+                                          : Icons.person_add_alt_1_outlined,
                                     ),
-                                  )
-                                : Icon(
-                                    isFollowing
-                                        ? Icons.person_remove_alt_1_outlined
-                                        : Icons.person_add_alt_1_outlined,
-                                  ),
-                            label: Text(isFollowing ? 'Unfollow' : 'Follow'),
-                          ),
-                          SizedBox(height: 18.h),
+                              label: Text(isFollowing ? 'Unfollow' : 'Follow'),
+                            ),
+                            SizedBox(height: 18.h),
+                          ],
 
                           // Details
                           _infoRow(
@@ -253,6 +274,8 @@ class _PlayerProfileViewState extends State<PlayerProfileView> {
                             ),
                           ),
 
+                          SizedBox(height: 18.h),
+                          _PlayerVideoGallery(posts: profile.posts),
                           SizedBox(height: 18.h),
                           _matchCard(),
                           SizedBox(height: 24.h),
@@ -415,6 +438,143 @@ class _PlayerProfileViewState extends State<PlayerProfileView> {
   }
 }
 
+class _PlayerVideoGallery extends StatelessWidget {
+  const _PlayerVideoGallery({required this.posts});
+
+  final List<dynamic>? posts;
+
+  @override
+  Widget build(BuildContext context) {
+    final videos = _videoUrlsFromPosts(posts);
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: const Color(0xFFE6E6E6)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Videos',
+            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10.h),
+          if (videos.isEmpty)
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 18.h),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE9F2EB),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.video_library_outlined,
+                    color: Colors.green.shade700,
+                    size: 32.r,
+                  ),
+                  SizedBox(height: 8.h),
+                  const Text('No videos yet'),
+                ],
+              ),
+            )
+          else
+            SizedBox(
+              height: 132.h,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: videos.length,
+                separatorBuilder: (context, index) => SizedBox(width: 10.w),
+                itemBuilder: (context, index) =>
+                    _PlayerVideoTile(videoUrl: videos[index], index: index),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PlayerVideoTile extends StatelessWidget {
+  const _PlayerVideoTile({required this.videoUrl, required this.index});
+
+  final String videoUrl;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(10.r),
+      onTap: () => _showVideo(context),
+      child: Container(
+        width: 136.w,
+        decoration: BoxDecoration(
+          color: const Color(0xFFE8F5EC),
+          borderRadius: BorderRadius.circular(10.r),
+          border: Border.all(color: Colors.green.withValues(alpha: 0.35)),
+        ),
+        child: Stack(
+          children: [
+            Center(
+              child: Icon(
+                Icons.play_circle_fill_rounded,
+                color: Colors.green.shade700,
+                size: 48.r,
+              ),
+            ),
+            Positioned(
+              left: 8.w,
+              top: 8.h,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.55),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  'Video ${index + 1}',
+                  style: TextStyle(color: Colors.white, fontSize: 12.sp),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showVideo(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        insetPadding: EdgeInsets.all(16.w),
+        child: Padding(
+          padding: EdgeInsets.all(12.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              VideoPlayerWidget(videoUrl: videoUrl),
+              SizedBox(height: 12.h),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 String _ageText(DateTime? dateOfBirth) {
   if (dateOfBirth == null) return '-';
   final now = DateTime.now();
@@ -430,4 +590,41 @@ String _numberText(num? value, {required String suffix}) {
   if (value == null) return '-';
   final number = value % 1 == 0 ? value.toInt().toString() : value.toString();
   return '$number$suffix';
+}
+
+List<String> _videoUrlsFromPosts(List<dynamic>? posts) {
+  if (posts == null) return const [];
+
+  return posts
+      .map(_videoUrlFromPost)
+      .whereType<String>()
+      .where((url) => url.trim().isNotEmpty)
+      .toList();
+}
+
+String? _videoUrlFromPost(dynamic post) {
+  if (post is String && _looksLikeVideoUrl(post)) return post;
+  if (post is! Map) return null;
+
+  for (final key in const [
+    'videoUrl',
+    'videoURL',
+    'mediaUrl',
+    'url',
+    'fileUrl',
+  ]) {
+    final value = post[key];
+    if (value is String && _looksLikeVideoUrl(value)) return value;
+  }
+
+  return null;
+}
+
+bool _looksLikeVideoUrl(String value) {
+  final lower = value.toLowerCase();
+  return lower.startsWith('http') &&
+      (lower.contains('.mp4') ||
+          lower.contains('.mov') ||
+          lower.contains('.m3u8') ||
+          lower.contains('/videos/'));
 }

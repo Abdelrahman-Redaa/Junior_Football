@@ -37,6 +37,7 @@ import '../../feature/home/presentation/views/ai_recommendation_view.dart';
 import '../../feature/home/presentation/views/ai_report_view.dart';
 import '../../feature/home/presentation/views/analyze_video_view.dart';
 import '../../feature/home/presentation/views/speed_session_view.dart';
+import '../../feature/home/presentation/views/training_hub_view.dart';
 import '../../feature/home/presentation/views/upload_vide_view.dart';
 import '../../feature/home/presentation/views/video_record_screen.dart';
 import '../../feature/home/presentation/views/weekly_plan_view.dart';
@@ -95,7 +96,15 @@ class Routes {
       case AppRoutes.editProfileView:
         return MaterialPageRoute(builder: (context) => const EditProfileView());
       case AppRoutes.sessionView:
-        return MaterialPageRoute(builder: (context) => const SessionView());
+        return MaterialPageRoute(
+          builder: (context) => SessionView(
+            args: settings.arguments is TrainingVideoArgs
+                ? settings.arguments as TrainingVideoArgs
+                : null,
+          ),
+        );
+      case AppRoutes.trainingHubView:
+        return MaterialPageRoute(builder: (context) => const TrainingHubView());
       case AppRoutes.sessionLevelView:
         return MaterialPageRoute(
           builder: (context) => const SessionLevelView(),
@@ -110,10 +119,11 @@ class Routes {
                     getIt.get<CommunityFeedViewModel>()
                       ..doIntent(GetCommunityFeedIntent()),
               ),
-              
+
               BlocProvider(
                 create: (context) =>
-                    getIt.get<HomeViewModel>()..doIntent(GetTrainingDashboardIntent()),
+                    getIt.get<HomeViewModel>()
+                      ..doIntent(GetTrainingDashboardIntent()),
               ),
             ],
             child: const BottomNavigationView(),
@@ -139,10 +149,14 @@ class Routes {
           ),
         );
       case AppRoutes.communityView:
-        return MaterialPageRoute(builder: (context) =>  BlocProvider(
-  create: (context) => getIt.get<CommunityViewModel>()..doIntent(GetCommunityPostsIntent()),
-  child: CommunityView(),
-));
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) =>
+                getIt.get<CommunityViewModel>()
+                  ..doIntent(GetCommunityPostsIntent()),
+            child: CommunityView(),
+          ),
+        );
       case AppRoutes.aiReportView:
         return MaterialPageRoute(
           settings: settings,
@@ -151,7 +165,8 @@ class Routes {
       case AppRoutes.postView:
         return MaterialPageRoute(
           settings: settings,
-          builder: (context) => PostView(post: settings.arguments as CommunityFeedEntity),
+          builder: (context) =>
+              PostView(post: settings.arguments as CommunityFeedEntity),
         );
       case AppRoutes.speedSessionView:
         return MaterialPageRoute(
@@ -174,15 +189,18 @@ class Routes {
         return MaterialPageRoute(
           builder: (context) => const VideoRecorderScreen(),
         );
-        case AppRoutes.weeklyPlanView:
-          return MaterialPageRoute(
-            builder: (context) => const WeeklyPlanScreen(),
-          );
-        case AppRoutes.playerProfileView:
-          return MaterialPageRoute(
-            builder: (context) => const PlayerProfileView(),
-            
-          );
+      case AppRoutes.weeklyPlanView:
+        return MaterialPageRoute(
+          builder: (context) => const WeeklyPlanScreen(),
+        );
+      case AppRoutes.playerProfileView:
+        return MaterialPageRoute(
+          builder: (context) => PlayerProfileView(
+            userId: settings.arguments is String
+                ? settings.arguments as String
+                : null,
+          ),
+        );
 
       default:
         return null;

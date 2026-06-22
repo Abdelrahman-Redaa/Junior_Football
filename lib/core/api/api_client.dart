@@ -91,6 +91,9 @@ abstract class ApiClient {
     @Body() Map<String, dynamic> body,
   );
 
+  @DELETE(EndPoint.deletePost)
+  Future<void> deletePost(@Path("postId") String postId);
+
   @POST(EndPoint.createPost)
   @MultiPart()
   Future<CreatedResponse> createPost({

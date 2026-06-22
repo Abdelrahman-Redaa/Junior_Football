@@ -4,6 +4,7 @@ import '../models/response_models/user_profile_dto.dart';
 
 abstract interface class ProfileDataSource {
   Future<Result<UserProfileDto>> getUserProfile();
+  Future<Result<UserProfileDto>> getUserProfileById(String userId);
   Future<Result<UserProfileDto>> uploadProfilePicture(File file);
   Future<Result<String>> uploadProfileVideo(
     File file,

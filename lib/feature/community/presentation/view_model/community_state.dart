@@ -9,6 +9,7 @@ class CommunityState {
   final BaseState<List<CommunityFeedEntity>> communityFeedState;
   final BaseState<LikedPostEntity> likePostState;
   final BaseState<LikedPostEntity> commentPostState;
+  final BaseState<void> deletePostState;
   final BaseState<LikedPostEntity> createPostState;
   final BaseState<UserProfileEntity> searchedProfileState;
   final BaseState<LikedPostEntity> followUserState;
@@ -18,6 +19,7 @@ class CommunityState {
     required this.communityFeedState,
     required this.likePostState,
     required this.commentPostState,
+    required this.deletePostState,
     required this.createPostState,
     required this.searchedProfileState,
     required this.followUserState,
@@ -28,6 +30,7 @@ class CommunityState {
     BaseState<List<CommunityFeedEntity>>? communityFeedState,
     BaseState<LikedPostEntity>? likePostState,
     BaseState<LikedPostEntity>? commentPostState,
+    BaseState<void>? deletePostState,
     BaseState<LikedPostEntity>? createPostState,
     BaseState<UserProfileEntity>? searchedProfileState,
     BaseState<LikedPostEntity>? followUserState,
@@ -37,6 +40,7 @@ class CommunityState {
       communityFeedState: communityFeedState ?? this.communityFeedState,
       likePostState: likePostState ?? this.likePostState,
       commentPostState: commentPostState ?? this.commentPostState,
+      deletePostState: deletePostState ?? this.deletePostState,
       createPostState: createPostState ?? this.createPostState,
       searchedProfileState: searchedProfileState ?? this.searchedProfileState,
       followUserState: followUserState ?? this.followUserState,
@@ -58,6 +62,11 @@ class CommentPostIntent extends CommunityIntent {
   final String postId;
   final String comment;
   CommentPostIntent(this.postId, this.comment);
+}
+
+class DeletePostIntent extends CommunityIntent {
+  final String postId;
+  DeletePostIntent(this.postId);
 }
 
 class CreatePostIntent extends CommunityIntent {

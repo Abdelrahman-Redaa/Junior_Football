@@ -24,6 +24,17 @@ class ProfileRepoImpl implements ProfileRepo {
   }
 
   @override
+  Future<Result<UserProfileEntity>> getUserProfileById(String userId) async {
+    final result = await _profileDataSource.getUserProfileById(userId);
+    switch (result) {
+      case Success<UserProfileDto>():
+        return Success(result.data.toEntity());
+      case Failure<UserProfileDto>():
+        return Failure(result.errorMessage);
+    }
+  }
+
+  @override
   Future<Result<UserProfileEntity>> uploadProfilePicture(File file) async {
     final result = await _profileDataSource.uploadProfilePicture(file);
     switch (result) {

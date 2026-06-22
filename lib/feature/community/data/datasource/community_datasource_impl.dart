@@ -28,6 +28,10 @@ class CommunityDataSourceImpl implements CommunityDataSource {
       executeApi(() => _apiClient.commentPost(postId, {"content": comment}));
 
   @override
+  Future<Result<void>> deletePost(String postId) =>
+      executeApi(() => _apiClient.deletePost(postId));
+
+  @override
   Future<Result<CreatedResponse>> createPost(File file, String content) =>
       executeApi(() => _apiClient.createPost(file: file, content: content));
 

@@ -4,6 +4,7 @@ import '../entities/user_profile_entity.dart';
 
 abstract interface class ProfileRepo {
   Future<Result<UserProfileEntity>> getUserProfile();
+  Future<Result<UserProfileEntity>> getUserProfileById(String userId);
   Future<Result<UserProfileEntity>> uploadProfilePicture(File file);
   Future<Result<String>> uploadProfileVideo(
     File file,

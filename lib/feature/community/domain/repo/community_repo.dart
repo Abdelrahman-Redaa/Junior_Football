@@ -9,6 +9,7 @@ abstract class CommunityRepo {
   Future<Result<List<CommunityFeedEntity>>> getCommunityFeed();
   Future<Result<LikedPostEntity>> likePost(String postId);
   Future<Result<LikedPostEntity>> commentPost(String postId, String comment);
+  Future<Result<void>> deletePost(String postId);
   Future<Result<LikedPostEntity>> createPost(File file, String content);
   Future<Result<UserProfileEntity>> getUserProfileById(String userId);
   Future<Result<LikedPostEntity>> followUser(String userId);

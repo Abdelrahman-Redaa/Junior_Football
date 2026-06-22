@@ -18,6 +18,7 @@ final class EndPoint {
   static const String communityFeed = "/api/post/feed";
   static const String likePost = "/api/Post/{postId}/like";
   static const String commentPost = "/api/Post/{postId}/comment";
+  static const String deletePost = "/api/post/{postId}";
   static const String trainingDashboard = "/api/Training/dashboard";
   static const String fullWeeklyPlan = "/api/WeeklyPlan/full-plan";
   static const String createPost = "/api/Post";

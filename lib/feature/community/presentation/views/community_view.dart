@@ -35,7 +35,8 @@ class _CommunityViewState extends State<CommunityView> {
         body: BlocListener<CommunityViewModel, CommunityState>(
           listenWhen: (previous, current) =>
               previous.followUserState != current.followUserState ||
-              previous.unfollowUserState != current.unfollowUserState,
+              previous.unfollowUserState != current.unfollowUserState ||
+              previous.deletePostState != current.deletePostState,
           listener: (context, state) {
             if (state.followUserState.isError) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -63,6 +64,20 @@ class _CommunityViewState extends State<CommunityView> {
             if (state.unfollowUserState.isLoaded) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Unfollowed successfully')),
+              );
+            }
+            if (state.deletePostState.isError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    state.deletePostState.errorMessage ?? 'Delete failed',
+                  ),
+                ),
+              );
+            }
+            if (state.deletePostState.isLoaded) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Post deleted successfully')),
               );
             }
           },
@@ -128,6 +143,16 @@ class _CommunityViewState extends State<CommunityView> {
                               likes: post.likesCount,
                               comments: post.commentsCount,
                               isLiked: post.isLikedByCurrentUser ?? false,
+                              onAuthorTap:
+                                  post.userId == null || post.userId!.isEmpty
+                                  ? null
+                                  : () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        AppRoutes.playerProfileView,
+                                        arguments: post.userId,
+                                      );
+                                    },
                               onUnfollowTap:
                                   post.userId == null || post.userId!.isEmpty
                                   ? null
@@ -140,6 +165,9 @@ class _CommunityViewState extends State<CommunityView> {
                                             ),
                                           );
                                     },
+                              onDeleteTap: post.id == null || post.id!.isEmpty
+                                  ? null
+                                  : () => _confirmDeletePost(context, post.id!),
                               onLikeTap: () {
                                 context.read<CommunityViewModel>().doIntent(
                                   LikePostIntent(post.id ?? ""),
@@ -165,6 +193,29 @@ class _CommunityViewState extends State<CommunityView> {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmDeletePost(BuildContext context, String postId) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete post'),
+        content: const Text('Are you sure you want to delete this post?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldDelete != true || !context.mounted) return;
+    context.read<CommunityViewModel>().doIntent(DeletePostIntent(postId));
   }
 }
 

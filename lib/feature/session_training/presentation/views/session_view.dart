@@ -6,10 +6,19 @@ import 'package:junior_football/core/utilities/theme_extension.dart';
 import '../../../ai/presentation/widget/video_player.dart';
 
 class SessionView extends StatefulWidget {
-  const SessionView({super.key});
+  const SessionView({super.key, this.args});
+
+  final TrainingVideoArgs? args;
 
   @override
   State<SessionView> createState() => _SessionViewState();
+}
+
+class TrainingVideoArgs {
+  final String title;
+  final String videoUrl;
+
+  const TrainingVideoArgs({required this.title, required this.videoUrl});
 }
 
 class _SessionViewState extends State<SessionView> {
@@ -18,27 +27,26 @@ class _SessionViewState extends State<SessionView> {
     'https://footballfc.runasp.net/uploads/videos/0a96d26c-169b-4d50-be6a-796601a8cac5.mp4',
     'https://footballfc.runasp.net/uploads/videos/15003242-488c-47de-a470-a607a7a45971.mp4',
   ];
-  late var randomUrl = _videoUrls[Random().nextInt(_videoUrls.length)];
+  late final String videoUrl =
+      widget.args?.videoUrl ?? _videoUrls[Random().nextInt(_videoUrls.length)];
+  late final String title = widget.args?.title ?? "Speed training";
 
   @override
   void initState() {
-    print(randomUrl);
     super.initState();
-
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = context.appTheme;
     return Scaffold(
-      appBar: AppBar(title: const Text("speed session")),
+      appBar: AppBar(title: Text(title)),
       body: SingleChildScrollView(
         child: Column(
           children: [
             AspectRatio(
               aspectRatio: 393 / 217,
-              child:     // Pick a random video URL
-              VideoPlayerWidget(videoUrl:randomUrl ,),
+              child: VideoPlayerWidget(videoUrl: videoUrl),
             ),
             const VerticalSpace(38),
             Padding(
@@ -92,7 +100,7 @@ class _SessionViewState extends State<SessionView> {
     final theme = context.appTheme;
     return Row(
       children: [
-        Text("Speed training", style: theme.semiBold24),
+        Expanded(child: Text(title, style: theme.semiBold24)),
         const Spacer(),
         Icon(Icons.access_time_filled_outlined, color: theme.neutral),
         const HorizontalSpace(5),

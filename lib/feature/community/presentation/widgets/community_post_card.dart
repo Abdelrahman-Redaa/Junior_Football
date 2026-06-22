@@ -15,6 +15,8 @@ class CommunityPostCard extends StatelessWidget {
   final VoidCallback? onLikeTap;
   final VoidCallback? onCommentTap;
   final VoidCallback? onUnfollowTap;
+  final VoidCallback? onAuthorTap;
+  final VoidCallback? onDeleteTap;
   final bool isLiked;
 
   const CommunityPostCard({
@@ -29,6 +31,8 @@ class CommunityPostCard extends StatelessWidget {
     this.onLikeTap,
     this.onCommentTap,
     this.onUnfollowTap,
+    this.onAuthorTap,
+    this.onDeleteTap,
     this.isLiked = false,
   });
 
@@ -41,43 +45,51 @@ class CommunityPostCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            CircleAvatar(
-              radius: 22.r,
-              backgroundColor: theme.borderColor,
-              child: CachedNetworkImage(
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
+            InkWell(
+              onTap: onAuthorTap,
+              customBorder: const CircleBorder(),
+              child: CircleAvatar(
+                radius: 22.r,
+                backgroundColor: theme.borderColor,
+                child: CachedNetworkImage(
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                ),
-                placeholder: (context, url) =>
-                    const CircularProgressIndicator(),
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
 
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-                imageUrl: image,
-                fit: BoxFit.cover,
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                  imageUrl: image,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             SizedBox(width: 10.w),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: theme.semiBold16,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    time,
-                    style: theme.regular14.copyWith(color: theme.subTitle),
-                  ),
-                ],
+              child: InkWell(
+                onTap: onAuthorTap,
+                borderRadius: BorderRadius.circular(6.r),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: theme.semiBold16,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      time,
+                      style: theme.regular14.copyWith(color: theme.subTitle),
+                    ),
+                  ],
+                ),
               ),
             ),
             if (onUnfollowTap != null) ...[
@@ -87,6 +99,12 @@ class CommunityPostCard extends StatelessWidget {
                 child: const Text('Unfollow'),
               ),
             ],
+            if (onDeleteTap != null)
+              IconButton(
+                onPressed: onDeleteTap,
+                icon: const Icon(Icons.delete_outline),
+                color: Colors.red,
+              ),
           ],
         ),
         SizedBox(height: 12.h),

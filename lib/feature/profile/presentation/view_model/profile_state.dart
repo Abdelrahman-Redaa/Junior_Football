@@ -55,6 +55,11 @@ sealed class ProfileIntent {}
 
 class GetProfileIntent extends ProfileIntent {}
 
+class GetProfileByIdIntent extends ProfileIntent {
+  final String userId;
+  GetProfileByIdIntent({required this.userId});
+}
+
 class UploadProfilePictureIntent extends ProfileIntent {
   final File file;
   UploadProfilePictureIntent({required this.file});

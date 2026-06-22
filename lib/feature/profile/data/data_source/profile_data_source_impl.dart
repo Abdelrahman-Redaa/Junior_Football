@@ -18,6 +18,10 @@ class ProfileDataSourceImpl implements ProfileDataSource {
       executeApi(() => _apiClient.getUserProfile());
 
   @override
+  Future<Result<UserProfileDto>> getUserProfileById(String userId) =>
+      executeApi(() => _apiClient.getUserProfileById(userId));
+
+  @override
   Future<Result<UserProfileDto>> uploadProfilePicture(File file) =>
       executeApi(() => _apiClient.uploadProfilePicture(file: file));
 

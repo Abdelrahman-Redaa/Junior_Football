@@ -30,6 +30,10 @@ class ProfileViewModel
       _getProfile();
       return;
     }
+    if (intent is GetProfileByIdIntent) {
+      _getProfileById(intent.userId);
+      return;
+    }
     if (intent is UploadProfilePictureIntent) {
       _uploadProfilePicture(intent.file);
       return;
@@ -50,6 +54,17 @@ class ProfileViewModel
   Future<void> _getProfile() async {
     emit(state.copyWith(profile: BaseState.loading()));
     final result = await _profileRepo.getUserProfile();
+    switch (result) {
+      case Success<UserProfileEntity>():
+        emit(state.copyWith(profile: BaseState.loaded(result.data)));
+      case Failure<UserProfileEntity>():
+        emit(state.copyWith(profile: BaseState.error(result.errorMessage)));
+    }
+  }
+
+  Future<void> _getProfileById(String userId) async {
+    emit(state.copyWith(profile: BaseState.loading()));
+    final result = await _profileRepo.getUserProfileById(userId);
     switch (result) {
       case Success<UserProfileEntity>():
         emit(state.copyWith(profile: BaseState.loaded(result.data)));

@@ -57,6 +57,10 @@ class CommunityRepoImpl implements CommunityRepo {
   }
 
   @override
+  Future<Result<void>> deletePost(String postId) =>
+      _communityDataSource.deletePost(postId);
+
+  @override
   Future<Result<LikedPostEntity>> createPost(File file, String content) async {
     final result = await _communityDataSource.createPost(file, content);
     switch (result) {

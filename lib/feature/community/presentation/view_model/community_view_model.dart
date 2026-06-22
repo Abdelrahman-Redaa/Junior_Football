@@ -21,6 +21,7 @@ class CommunityViewModel
           communityFeedState: BaseState.init(),
           likePostState: BaseState.init(),
           commentPostState: BaseState.init(),
+          deletePostState: BaseState.init(),
           createPostState: BaseState.init(),
           searchedProfileState: BaseState.init(),
           followUserState: BaseState.init(),
@@ -37,6 +38,8 @@ class CommunityViewModel
         _likePost(intent.postId);
       case CommentPostIntent():
         _commentPost(intent.postId, intent.comment);
+      case DeletePostIntent():
+        _deletePost(intent.postId);
       case CreatePostIntent():
         _createPost(intent.file, intent.content);
       case SearchUserProfileIntent():
@@ -99,6 +102,31 @@ class CommunityViewModel
           state.copyWith(
             commentPostState: BaseState.error(result.errorMessage),
           ),
+        );
+        emitEvent(CommunityErrorEvent(result.errorMessage));
+    }
+  }
+
+  Future<void> _deletePost(String postId) async {
+    final trimmedPostId = postId.trim();
+    if (trimmedPostId.isEmpty) {
+      emit(
+        state.copyWith(deletePostState: BaseState.error('Post ID is missing')),
+      );
+      emitEvent(CommunityErrorEvent('Post ID is missing'));
+      return;
+    }
+
+    emit(state.copyWith(deletePostState: BaseState.loading()));
+    final result = await _communityRepo.deletePost(trimmedPostId);
+    switch (result) {
+      case Success<void>():
+        emit(state.copyWith(deletePostState: BaseState.loaded(null)));
+        emitEvent(CommunitySuccessEvent('Post deleted successfully'));
+        _getCommunityFeed();
+      case Failure<void>():
+        emit(
+          state.copyWith(deletePostState: BaseState.error(result.errorMessage)),
         );
         emitEvent(CommunityErrorEvent(result.errorMessage));
     }

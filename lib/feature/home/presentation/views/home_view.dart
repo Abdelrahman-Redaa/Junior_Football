@@ -10,9 +10,11 @@ import 'package:junior_football/feature/home/presentation/view_model/home_view_m
 import 'package:junior_football/feature/home/presentation/widgets/custom_home_training_card.dart';
 import 'package:junior_football/feature/home/presentation/widgets/custom_speed_training.dart';
 import 'package:junior_football/feature/home/presentation/widgets/weekly_planing_widget.dart';
+import 'package:junior_football/feature/session_training/presentation/views/session_view.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/routes/routes_name.dart';
 import '../../../../core/utilities/theme_extension.dart';
+import 'training_hub_view.dart';
 import '../widgets/custom__training_card.dart';
 import '../widgets/custom_ai_summary_card.dart';
 import '../widgets/custom_card.dart';
@@ -127,7 +129,12 @@ class _HomeViewState extends State<HomeView> {
                             (state.trainingDashboard.data!.xpProgress /
                                     state.trainingDashboard.data!.nextLevelXp)
                                 .clamp(0.0, 1.0),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.trainingHubView,
+                          );
+                        },
                       )
                     else
                       const SizedBox.shrink(),
@@ -442,71 +449,99 @@ class _HomeViewState extends State<HomeView> {
                         },
                       )
                     else ...[
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                          vertical: 10.h,
-                          horizontal: 16.w,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFEAF6EC),
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 40.w,
-                              height: 35.h,
-                              padding: EdgeInsets.all(4.w),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFB9D7C0),
-                                borderRadius: BorderRadius.circular(8.r),
-                              ),
-                              child: SvgPicture.asset(SVGAssets.football),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.sessionView,
+                            arguments: const TrainingVideoArgs(
+                              title: 'Shooting lesson',
+                              videoUrl: TrainingHubView.shootingVideo,
                             ),
-                            SizedBox(width: 10.w),
-                            Text(
-                              "Shooting lesson",
-                              style: theme.regular22.copyWith(
-                                fontWeight: FontWeight.bold,
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(12.r),
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                            vertical: 10.h,
+                            horizontal: 16.w,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFEAF6EC),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 40.w,
+                                height: 35.h,
+                                padding: EdgeInsets.all(4.w),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFB9D7C0),
+                                  borderRadius: BorderRadius.circular(8.r),
+                                ),
+                                child: SvgPicture.asset(SVGAssets.football),
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 10.w),
+                              Text(
+                                "Shooting lesson",
+                                style: theme.regular22.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 16.h),
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                          vertical: 10.h,
-                          horizontal: 16.w,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Color(0xFFEAF6EC),
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 40.w,
-                              height: 35.h,
-                              padding: EdgeInsets.all(4.w),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFB9D7C0),
-                                borderRadius: BorderRadius.circular(8.r),
-                              ),
-                              child: SvgPicture.asset(SVGAssets.passingLesson),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.sessionView,
+                            arguments: const TrainingVideoArgs(
+                              title: 'Passing lesson',
+                              videoUrl: TrainingHubView.passingVideo,
                             ),
-                            SizedBox(width: 10.w),
-                            Text(
-                              "Passing lesson",
-                              style: theme.regular22.copyWith(
-                                fontWeight: FontWeight.bold,
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(12.r),
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                            vertical: 10.h,
+                            horizontal: 16.w,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFEAF6EC),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 40.w,
+                                height: 35.h,
+                                padding: EdgeInsets.all(4.w),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFB9D7C0),
+                                  borderRadius: BorderRadius.circular(8.r),
+                                ),
+                                child: SvgPicture.asset(
+                                  SVGAssets.passingLesson,
+                                ),
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 10.w),
+                              Text(
+                                "Passing lesson",
+                                style: theme.regular22.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
