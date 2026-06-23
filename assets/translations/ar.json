@@ -207,7 +207,11 @@
   },
   "communityPost": {
     "share": "مشاركة",
-    "unfollow": "إلغاء المتابعة"
+    "unfollow": "إلغاء المتابعة",
+    "copyLink": "نسخ الرابط",
+    "copyContent": "نسخ النص",
+    "linkCopied": "تم نسخ الرابط",
+    "contentCopied": "تم نسخ النص"
   },
   "aiHub": {
     "title": "مركز الذكاء الاصطناعي",

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/routes/routes_name.dart';
 import '../../../../core/utilities/theme_extension.dart';
@@ -158,7 +159,7 @@ class CommunityPostCard extends StatelessWidget {
                   onCommentTap ??
                   () => Navigator.pushNamed(context, AppRoutes.postView),
             ),
-            _action(Icons.share, "communityPost.share".tr(), context, onTap: () {}),
+            _action(Icons.share, "communityPost.share".tr(), context, onTap: () => _showShareSheet(context)),
           ],
         ),
       ],
@@ -200,6 +201,71 @@ class CommunityPostCard extends StatelessWidget {
             child: image.startsWith('http')
                 ? CachedNetworkImage(imageUrl: image)
                 : Image.asset(image),
+          ),
+        ),
+      ),
+    );
+  }
+  void _showShareSheet(BuildContext context) {
+    final postLink = postImage ?? content ?? '';
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'communityPost.share'.tr(),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 12),
+              ListTile(
+                leading: const Icon(Icons.link_rounded, color: Colors.blue),
+                title: Text('communityPost.copyLink'.tr()),
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: postLink));
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('communityPost.linkCopied'.tr()),
+                      duration: const Duration(seconds: 2),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading:
+                    const Icon(Icons.content_copy_rounded, color: Colors.green),
+                title: Text('communityPost.copyContent'.tr()),
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: content ?? ''));
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('communityPost.contentCopied'.tr()),
+                      duration: const Duration(seconds: 2),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),

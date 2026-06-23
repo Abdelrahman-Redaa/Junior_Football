@@ -207,7 +207,11 @@
   },
   "communityPost": {
     "share": "Share",
-    "unfollow": "Unfollow"
+    "unfollow": "Unfollow",
+    "copyLink": "Copy Link",
+    "copyContent": "Copy Text",
+    "linkCopied": "Link copied to clipboard",
+    "contentCopied": "Text copied to clipboard"
   },
   "aiHub": {
     "title": "Ai Hub",

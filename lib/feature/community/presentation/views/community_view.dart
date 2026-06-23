@@ -167,6 +167,10 @@ class _CommunityViewState extends State<CommunityView> {
                         onAuthorTap: post.userId == null || post.userId!.isEmpty
                             ? null
                             : () {
+                                debugPrint('Navigating to profile with ID: ${post.userId}');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Opening Profile for ID: ${post.userId}')),
+                                );
                                 Navigator.pushNamed(
                                   context,
                                   AppRoutes.playerProfileView,

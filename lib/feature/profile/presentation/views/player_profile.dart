@@ -1,40 +1,46 @@
-import 'dart:io';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:junior_football/core/utilities/show_toast_message.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:junior_football/core/constants/app_assets.dart';
 import 'package:junior_football/core/di/di.dart';
+import 'package:junior_football/core/utilities/theme_extension.dart';
 import 'package:junior_football/feature/ai/presentation/widget/video_player.dart';
+import 'package:junior_football/feature/profile/domain/entities/user_profile_entity.dart';
 import 'package:junior_football/feature/profile/presentation/view_model/profile_state.dart';
 import 'package:junior_football/feature/profile/presentation/view_model/profile_view_model.dart';
 
-class PlayerProfileView extends StatefulWidget {
+class PlayerProfileView extends StatelessWidget {
   const PlayerProfileView({super.key, this.userId});
 
   final String? userId;
 
   @override
-  State<PlayerProfileView> createState() => _PlayerProfileViewState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) {
+        final viewModel = getIt.get<ProfileViewModel>();
+        if (userId == null || userId!.isEmpty) {
+          viewModel.doIntent(GetProfileIntent());
+        } else {
+          viewModel.doIntent(GetProfileByIdIntent(userId: userId!));
+        }
+        return viewModel;
+      },
+      child: _PlayerProfileBody(userId: userId),
+    );
+  }
 }
 
-class _PlayerProfileViewState extends State<PlayerProfileView> {
-  final ImagePicker _picker = ImagePicker();
+class _PlayerProfileBody extends StatelessWidget {
+  const _PlayerProfileBody({this.userId});
 
-  Future<void> _pickProfileImage(BuildContext context) async {
-    final viewModel = context.read<ProfileViewModel>();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (!mounted || image == null) return;
-
-    final file = File(image.path);
-    viewModel.doIntent(UploadProfilePictureIntent(file: file));
-  }
+  final String? userId;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7FB),
       appBar: AppBar(
         title: Text('profile.playerProfile'.tr()),
         leading: IconButton(
@@ -43,396 +49,173 @@ class _PlayerProfileViewState extends State<PlayerProfileView> {
         ),
       ),
       body: SafeArea(
-        child: BlocProvider(
-          create: (context) {
-            final viewModel = getIt.get<ProfileViewModel>();
-            final userId = widget.userId;
-            viewModel.doIntent(
-              userId == null || userId.isEmpty
-                  ? GetProfileIntent()
-                  : GetProfileByIdIntent(userId: userId),
-            );
-            return viewModel;
-          },
-          child: BlocBuilder<ProfileViewModel, ProfileState>(
-            builder: (context, state) {
-              final isCurrentUserProfile = widget.userId == null;
-              if (state.profile.isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state.profile.isError) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        state.profile.errorMessage ?? 'Failed to load profile',
-                      ),
-                      SizedBox(height: 12.h),
-                      ElevatedButton(
-                        onPressed: () {
-                          final userId = widget.userId;
-                          context.read<ProfileViewModel>().doIntent(
-                            userId == null || userId.isEmpty
-                                ? GetProfileIntent()
-                                : GetProfileByIdIntent(userId: userId),
-                          );
-                        },
-                        child: Text('profile.retry'.tr()),
-                      ),
-                    ],
+        child: BlocConsumer<ProfileViewModel, ProfileState>(
+          listenWhen: (previous, current) =>
+              previous.followAction != current.followAction,
+          listener: (context, state) {
+            if (state.followAction.isError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    state.followAction.errorMessage ?? 'Action failed',
                   ),
-                );
-              }
+                ),
+              );
+            }
+          },
+          builder: (context, state) {
+            if (state.profile.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-              final profile = state.profile.data;
-              if (profile == null) return const SizedBox.shrink();
-              final isFollowing = profile.isFollowing ?? false;
+            if (state.profile.isError) {
+              return _ErrorState(
+                  message: state.profile.errorMessage, userId: userId);
+            }
 
-              return SingleChildScrollView(
+            final profile = state.profile.data;
+            if (profile == null) return const SizedBox.shrink();
+
+            return RefreshIndicator(
+              onRefresh: () async {
+                final vm = context.read<ProfileViewModel>();
+                if (userId == null || userId!.isEmpty) {
+                  vm.doIntent(GetProfileIntent());
+                } else {
+                  vm.doIntent(GetProfileByIdIntent(userId: userId!));
+                }
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 32.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Avatar / Name / Rank
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 12.h),
-                          GestureDetector(
-                            onTap: isCurrentUserProfile
-                                ? () => _pickProfileImage(context)
-                                : null,
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                CircleAvatar(
-                                  radius: 56.r,
-                                  backgroundImage:
-                                      profile.profileImageUrl != null
-                                      ? NetworkImage(profile.profileImageUrl!)
-                                      : null,
-                                  child: profile.profileImageUrl == null
-                                      ? Icon(Icons.person, size: 48.r)
-                                      : null,
-                                ),
-                                if (state.uploadPicture.isLoading)
-                                  Container(
-                                    width: 112.r,
-                                    height: 112.r,
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.35,
-                                      ),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Center(
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 10.h),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                profile.fullName ?? profile.userName ?? '',
-                                style: TextStyle(
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(width: 8.w),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8.w,
-                                  vertical: 4.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.green.shade600,
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                                child: Text(
-                                  profile.globalRank == null
-                                      ? 'Player'
-                                      : '#${profile.globalRank}',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12.sp,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8.h),
-                          SelectableText(
-                            'ID: ${profile.userId ?? '-'}',
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 12.sp,
-                            ),
-                          ),
-                          SizedBox(height: 16.h),
-
-                          // Stat cards
-                          Row(
-                            children: [
-                              _statCardSmall(
-                                icon: Icons.people_outline,
-                                value: '${profile.followersCount ?? 0}',
-                                label: 'Followers',
-                              ),
-                              SizedBox(width: 8.w),
-                              _statCardSmall(
-                                icon: Icons.person_add_alt,
-                                value: '${profile.followingCount ?? 0}',
-                                label: 'Following',
-                              ),
-                              SizedBox(width: 8.w),
-                              _statCardSmall(
-                                icon: Icons.bolt_outlined,
-                                value: '${profile.xp ?? 0}',
-                                label: 'XP',
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 12.h),
-                          if (!isCurrentUserProfile) ...[
-                            ElevatedButton.icon(
-                              onPressed:
-                                  profile.userId == null ||
-                                      state.followAction.isLoading
-                                  ? null
-                                  : () {
-                                      final intent = isFollowing
-                                          ? UnfollowUserIntent(
-                                              userId: profile.userId!,
-                                            )
-                                          : FollowUserIntent(
-                                              userId: profile.userId!,
-                                            );
-                                      context.read<ProfileViewModel>().doIntent(
-                                        intent,
-                                      );
-                                    },
-                              icon: state.followAction.isLoading
-                                  ? SizedBox(
-                                      width: 16.r,
-                                      height: 16.r,
-                                      child: const CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : Icon(
-                                      isFollowing
-                                          ? Icons.person_remove_alt_1_outlined
-                                          : Icons.person_add_alt_1_outlined,
-                                    ),
-                              label: Text(
-                                isFollowing
-                                    ? 'community.unfollow'.tr()
-                                    : 'Follow',
-                              ),
-                            ),
-                            SizedBox(height: 18.h),
-                          ],
-
-                          // Details
-                          _infoRow(
-                            Icons.cake_outlined,
-                            'Age',
-                            _ageText(profile.dateOfBirth),
-                          ),
-                          SizedBox(height: 8.h),
-                          _infoRow(
-                            Icons.flag_outlined,
-                            'Nationality',
-                            profile.country ?? '-',
-                          ),
-                          SizedBox(height: 8.h),
-                          _infoRow(
-                            Icons.height,
-                            'Height/Weight',
-                            '${_numberText(profile.height, suffix: ' cm')} / ${_numberText(profile.weight, suffix: ' kg')}',
-                          ),
-                          SizedBox(height: 8.h),
-                          _infoRow(
-                            Icons.sports_football,
-                            'Preferred Foot',
-                            profile.preferredFoot ?? '-',
-                          ),
-                          SizedBox(height: 8.h),
-                          _infoRow(Icons.group, 'Team', profile.team ?? '-'),
-                          SizedBox(height: 8.h),
-                          _infoRow(
-                            Icons.video_library_outlined,
-                            'Posts',
-                            '',
-                            trailing: _videoBadge(
-                              '${profile.posts?.length ?? 0} Posts',
-                            ),
-                          ),
-
-                          SizedBox(height: 18.h),
-                          _PlayerVideoGallery(posts: profile.posts),
-                          SizedBox(height: 18.h),
-                          _matchCard(),
-                          SizedBox(height: 24.h),
-                        ],
-                      ),
+                    _PlayerProfileHeader(
+                      profile: profile,
+                      isFollowLoading: state.followAction.isLoading,
+                      isCurrentUser: userId == null,
                     ),
+                    SizedBox(height: 16.h),
+                    _StatsRow(profile: profile),
+                    SizedBox(height: 16.h),
+                    _DetailsSection(profile: profile),
+                    SizedBox(height: 16.h),
+                    _PlayerVideoGallerySection(profile: profile),
                   ],
                 ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _statCardSmall({
-    required IconData icon,
-    required String value,
-    required String label,
-  }) {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12.h),
-        decoration: BoxDecoration(
-          color: Colors.green.shade600,
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: Colors.white, size: 22.r),
-            SizedBox(height: 8.h),
-            Text(
-              value,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
               ),
-            ),
-            SizedBox(height: 6.h),
-            Text(label, style: TextStyle(color: Colors.white70)),
-          ],
+            );
+          },
         ),
       ),
     );
   }
+}
 
-  Widget _infoRow(
-    IconData icon,
-    String title,
-    String value, {
-    Widget? trailing,
-  }) {
-    return Row(
-      children: [
-        Icon(icon, size: 18.r, color: Colors.grey[700]),
-        SizedBox(width: 12.w),
-        Expanded(
-          child: Text(title, style: TextStyle(fontSize: 14.sp)),
-        ),
-        if (trailing != null)
-          trailing
-        else
-          Text(value, style: TextStyle(color: Colors.black54)),
-      ],
-    );
-  }
+class _PlayerProfileHeader extends StatelessWidget {
+  const _PlayerProfileHeader({
+    required this.profile,
+    required this.isFollowLoading,
+    required this.isCurrentUser,
+  });
 
-  Widget _videoBadge(String text) {
+  final UserProfileEntity profile;
+  final bool isFollowLoading;
+  final bool isCurrentUser;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    final name = _fallback(profile.fullName, profile.userName, 'Player');
+    final userId = profile.userId ?? '-';
+    final isFollowing = profile.isFollowing ?? false;
+
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: Colors.green.shade600,
-        borderRadius: BorderRadius.circular(16.r),
+        color: theme.secondary,
+        border: Border.all(color: theme.borderColor),
+        borderRadius: BorderRadius.circular(12.r),
       ),
-      child: Text(
-        text,
-        style: TextStyle(color: Colors.white, fontSize: 12.sp),
-      ),
-    );
-  }
-
-  Widget _matchCard() {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
-      elevation: 2,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12.r),
-                child: Image.asset(
-                  AppAssets.profile,
-                  height: 160.h,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                left: 12.w,
-                top: 12.h,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 6.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade600,
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Text(
-                    'Match',
-                    style: TextStyle(color: Colors.white, fontSize: 12.sp),
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 12.w,
-                bottom: 12.h,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.6),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Text(
-                    '12.45',
-                    style: TextStyle(color: Colors.white, fontSize: 12.sp),
-                  ),
-                ),
-              ),
-            ],
-          ),
           Padding(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.all(14.w),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                CircleAvatar(
+                  radius: 42.r,
+                  backgroundColor: theme.primary.withOpacity(0.12),
+                  backgroundImage: _networkImage(profile.profileImageUrl),
+                  child: profile.profileImageUrl == null
+                      ? Icon(Icons.person, size: 42.r, color: theme.primary)
+                      : null,
+                ),
+                SizedBox(height: 10.h),
                 Text(
-                  'Match Highlights - Al Ahly Vs Zamalek',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.semiBold24,
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  profile.email ?? profile.userName ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.regular14.copyWith(color: theme.subTitle),
                 ),
                 SizedBox(height: 8.h),
-                Row(
-                  children: [
-                    Icon(Icons.calendar_today_outlined, size: 16.r),
-                    SizedBox(width: 6.w),
-                    Text('11-10-2024', style: TextStyle(color: Colors.black54)),
-                  ],
-                ),
+                _IdBadge(userId: userId),
+                if ((profile.bio ?? '').isNotEmpty) ...[
+                  SizedBox(height: 10.h),
+                  Text(
+                    profile.bio!,
+                    textAlign: TextAlign.center,
+                    style: theme.regular14.copyWith(color: theme.subTitle),
+                  ),
+                ],
+                if (!isCurrentUser) ...[
+                  SizedBox(height: 16.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: profile.userId == null || isFollowLoading
+                              ? null
+                              : () {
+                                  final intent = isFollowing
+                                      ? UnfollowUserIntent(
+                                          userId: profile.userId!)
+                                      : FollowUserIntent(
+                                          userId: profile.userId!);
+                                  context
+                                      .read<ProfileViewModel>()
+                                      .doIntent(intent);
+                                },
+                          icon: isFollowLoading
+                              ? SizedBox(
+                                  width: 16.r,
+                                  height: 16.r,
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Icon(
+                                  isFollowing
+                                      ? Icons.person_remove_alt_1_outlined
+                                      : Icons.person_add_alt_1_outlined,
+                                ),
+                          label: Text(
+                            isFollowing ? 'community.unfollow'.tr() : 'Follow',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
@@ -442,52 +225,299 @@ class _PlayerProfileViewState extends State<PlayerProfileView> {
   }
 }
 
-class _PlayerVideoGallery extends StatelessWidget {
-  const _PlayerVideoGallery({required this.posts});
+class _StatsRow extends StatelessWidget {
+  const _StatsRow({required this.profile});
 
-  final List<dynamic>? posts;
+  final UserProfileEntity profile;
 
   @override
   Widget build(BuildContext context) {
-    final videos = _videoUrlsFromPosts(posts);
+    return Row(
+      children: [
+        _StatTile(
+          value: '${profile.followersCount ?? 0}',
+          label: 'Followers',
+          icon: Icons.group_outlined,
+        ),
+        SizedBox(width: 8.w),
+        _StatTile(
+          value: '${profile.followingCount ?? 0}',
+          label: 'Following',
+          icon: Icons.person_add_alt_outlined,
+        ),
+        SizedBox(width: 8.w),
+        _StatTile(
+          value: '${profile.xp ?? 0}',
+          label: 'XP',
+          icon: Icons.bolt_outlined,
+        ),
+      ],
+    );
+  }
+}
+
+class _StatTile extends StatelessWidget {
+  const _StatTile({
+    required this.value,
+    required this.label,
+    required this.icon,
+  });
+
+  final String value;
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+
+    return Expanded(
+      child: Container(
+        height: 94.h,
+        padding: EdgeInsets.all(10.w),
+        decoration: BoxDecoration(
+          color: theme.primary,
+          borderRadius: BorderRadius.circular(10.r),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: theme.secondary, size: 22.r),
+            SizedBox(height: 8.h),
+            Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.semiBold16.copyWith(color: theme.secondary),
+            ),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.medium14.copyWith(color: theme.secondary),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DetailsSection extends StatelessWidget {
+  const _DetailsSection({required this.profile});
+
+  final UserProfileEntity profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
 
     return Container(
-      width: double.infinity,
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.secondary,
+        border: Border.all(color: theme.borderColor),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFFE6E6E6)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'profile.videoGallery'.tr(),
-            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+          Text('profile.playerInfo'.tr(), style: theme.semiBold24),
+          SizedBox(height: 8.h),
+          _InfoRow(
+            icon: Icons.badge_outlined,
+            title: 'User ID',
+            value: profile.userId ?? '-',
           ),
-          SizedBox(height: 10.h),
-          if (videos.isEmpty)
+          _InfoRow(
+            icon: Icons.phone_outlined,
+            title: 'Phone Number',
+            value: profile.phoneNumber ?? '-',
+          ),
+          _InfoRow(
+            icon: Icons.cake_outlined,
+            title: 'Age',
+            value: _ageText(profile.dateOfBirth),
+          ),
+          _InfoRow(
+            icon: Icons.flag_outlined,
+            title: 'Country',
+            value: profile.country ?? '-',
+          ),
+          _InfoRow(
+            icon: Icons.sports_soccer_outlined,
+            title: 'Position',
+            value: profile.playingPosition ?? '-',
+          ),
+          _InfoRow(
+            icon: Icons.straighten_outlined,
+            title: 'Height / Weight',
+            value:
+                '${_numberText(profile.height, suffix: ' cm')} / ${_numberText(profile.weight, suffix: ' kg')}',
+          ),
+          _InfoRow(
+            icon: Icons.directions_run_outlined,
+            title: 'Preferred Foot',
+            value: profile.preferredFoot ?? '-',
+          ),
+          _InfoRow(
+            icon: Icons.shield_outlined,
+            title: 'Team',
+            value: profile.team ?? '-',
+          ),
+          _InfoRow(
+            icon: Icons.emoji_events_outlined,
+            title: 'Global Rank',
+            value: profile.globalRank == null ? '-' : '#${profile.globalRank}',
+          ),
+          _InfoRow(
+            icon: Icons.article_outlined,
+            title: 'Posts',
+            value: '${profile.posts?.length ?? 0}',
+            showDivider: false,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({
+    required this.icon,
+    required this.title,
+    required this.value,
+    this.showDivider = true,
+  });
+
+  final IconData icon;
+  final String title;
+  final String value;
+  final bool showDivider;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.h),
+          child: Row(
+            children: [
+              Icon(icon, color: theme.primary, size: 20.r),
+              SizedBox(width: 10.w),
+              Expanded(child: Text(title, style: theme.semiBold16)),
+              SizedBox(width: 10.w),
+              Flexible(
+                child: Text(
+                  value,
+                  maxLines: 2,
+                  textAlign: TextAlign.end,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.regular14.copyWith(color: theme.subTitle),
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (showDivider) Divider(height: 1, color: theme.borderColor),
+      ],
+    );
+  }
+}
+
+class _IdBadge extends StatelessWidget {
+  const _IdBadge({required this.userId});
+
+  final String userId;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(999),
+      onTap: () {
+        Clipboard.setData(ClipboardData(text: userId));
+        ShowToastMessage.show(
+          context: context,
+          message: "ID copied to clipboard",
+          isError: false,
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+        decoration: BoxDecoration(
+          color: theme.primary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'ID: $userId',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.medium14.copyWith(color: theme.primary),
+            ),
+            SizedBox(width: 4.w),
+            Icon(Icons.copy, size: 14.r, color: theme.primary),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PlayerVideoGallerySection extends StatelessWidget {
+  const _PlayerVideoGallerySection({required this.profile});
+
+  final UserProfileEntity profile;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    final videos = {
+      ...(profile.videosUrl ?? []),
+      ..._videoUrlsFromPosts(profile.posts),
+    }.toList();
+
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: theme.secondary,
+        border: Border.all(color: theme.borderColor),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('profile.videoGallery'.tr(), style: theme.semiBold24),
+          if (videos.isEmpty) ...[
+            SizedBox(height: 10.h),
             Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 18.h),
+              padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 12.w),
               decoration: BoxDecoration(
-                color: const Color(0xFFE9F2EB),
+                color: theme.primary.withOpacity(0.06),
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: Column(
                 children: [
                   Icon(
                     Icons.video_library_outlined,
-                    color: Colors.green.shade700,
+                    color: theme.primary,
                     size: 32.r,
                   ),
                   SizedBox(height: 8.h),
-                  Text('profile.noVideos'.tr()),
+                  Text('profile.noVideos'.tr(), style: theme.semiBold16),
                 ],
               ),
-            )
-          else
+            ),
+          ],
+          if (videos.isNotEmpty) ...[
+            SizedBox(height: 10.h),
             SizedBox(
               height: 132.h,
               child: ListView.separated(
@@ -495,39 +525,42 @@ class _PlayerVideoGallery extends StatelessWidget {
                 itemCount: videos.length,
                 separatorBuilder: (context, index) => SizedBox(width: 10.w),
                 itemBuilder: (context, index) =>
-                    _PlayerVideoTile(videoUrl: videos[index], index: index),
+                    _VideoTile(videoUrl: videos[index], index: index),
               ),
             ),
+          ],
         ],
       ),
     );
   }
 }
 
-class _PlayerVideoTile extends StatelessWidget {
-  const _PlayerVideoTile({required this.videoUrl, required this.index});
+class _VideoTile extends StatelessWidget {
+  const _VideoTile({required this.videoUrl, required this.index});
 
   final String videoUrl;
   final int index;
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
+
     return InkWell(
       borderRadius: BorderRadius.circular(10.r),
-      onTap: () => _showVideo(context),
+      onTap: () => _showVideo(context, videoUrl),
       child: Container(
         width: 136.w,
         decoration: BoxDecoration(
           color: const Color(0xFFE8F5EC),
           borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(color: Colors.green.withValues(alpha: 0.35)),
+          border: Border.all(color: theme.primary.withOpacity(0.35)),
         ),
         child: Stack(
           children: [
             Center(
               child: Icon(
                 Icons.play_circle_fill_rounded,
-                color: Colors.green.shade700,
+                color: theme.primary,
                 size: 48.r,
               ),
             ),
@@ -537,12 +570,12 @@ class _PlayerVideoTile extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.55),
+                  color: Colors.black.withOpacity(0.55),
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
                   'Video ${index + 1}',
-                  style: TextStyle(color: Colors.white, fontSize: 12.sp),
+                  style: theme.medium14.copyWith(color: Colors.white),
                 ),
               ),
             ),
@@ -552,7 +585,7 @@ class _PlayerVideoTile extends StatelessWidget {
     );
   }
 
-  void _showVideo(BuildContext context) {
+  void _showVideo(BuildContext context, String videoUrl) {
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -579,6 +612,54 @@ class _PlayerVideoTile extends StatelessWidget {
   }
 }
 
+class _ErrorState extends StatelessWidget {
+  const _ErrorState({this.message, this.userId});
+
+  final String? message;
+  final String? userId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(24.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              message ?? 'Failed to load profile',
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 12.h),
+            ElevatedButton(
+              onPressed: () {
+                final vm = context.read<ProfileViewModel>();
+                if (userId == null || userId!.isEmpty) {
+                  vm.doIntent(GetProfileIntent());
+                } else {
+                  vm.doIntent(GetProfileByIdIntent(userId: userId!));
+                }
+              },
+              child: Text('profile.retry'.tr()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+ImageProvider? _networkImage(String? url) {
+  if (url == null || url.isEmpty) return null;
+  return NetworkImage(url);
+}
+
+String _fallback(String? first, String? second, String fallback) {
+  if (first != null && first.trim().isNotEmpty) return first;
+  if (second != null && second.trim().isNotEmpty) return second;
+  return fallback;
+}
+
 String _ageText(DateTime? dateOfBirth) {
   if (dateOfBirth == null) return '-';
   final now = DateTime.now();
@@ -587,7 +668,7 @@ String _ageText(DateTime? dateOfBirth) {
       now.month > dateOfBirth.month ||
       (now.month == dateOfBirth.month && now.day >= dateOfBirth.day);
   if (!hadBirthday) age--;
-  return age < 0 ? '-' : '$age Years Old';
+  return age < 0 ? '-' : '$age years';
 }
 
 String _numberText(num? value, {required String suffix}) {
