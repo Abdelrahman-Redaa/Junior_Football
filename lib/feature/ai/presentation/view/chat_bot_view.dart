@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:junior_football/core/constants/app_assets.dart';
@@ -43,7 +44,7 @@ class _ChatBotViewState extends State<ChatBotView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Ai Chat"), centerTitle: true),
+      appBar: AppBar(title: Text('ai.chatTitle'.tr()), centerTitle: true),
       bottomNavigationBar: _TypeText(onSend: _scrollToBottom),
       body: SafeArea(
         child: BlocConsumer<ChatViewModel, ChatState>(

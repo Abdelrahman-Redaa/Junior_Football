@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:junior_football/core/constants/app_assets.dart';
@@ -36,7 +36,6 @@ class _WelcomeViewState extends State<WelcomeView> {
       }
       if (event is ShowToast && mounted) {
         ShowToastMessage.show(context: context, message: event.message, isError: true);
-
       }
       if (event is NavigateToHome && mounted) {
         Navigator.of(context).pushNamed(AppRoutes.bottomNavigationView);
@@ -70,12 +69,12 @@ class _WelcomeViewState extends State<WelcomeView> {
           Image.asset(AppAssets.ball),
           VerticalSpace(16),
           Text(
-            "Welcome to",
+            'welcome.welcomeTo'.tr(),
             style: theme.regular18.copyWith(color: Color(0xFF5F5F5F)),
           ),
           VerticalSpace(16),
           Text(
-            "Junior Football",
+            'welcome.appName'.tr(),
             style: theme.regular24.copyWith(fontSize: 32),
           ),
           SizedBox(child: Image.asset(AppAssets.player)),
@@ -84,11 +83,10 @@ class _WelcomeViewState extends State<WelcomeView> {
             onPressed: () {
               context.read<AuthViewModel>().doIntent(NavigateToSignupIntent());
             },
-            child: Text("Create New Account"),
+            child: Text('welcome.createAccount'.tr()),
           ),
           VerticalSpace(16),
           BlocBuilder<AuthViewModel, AuthState>(
-
             builder: (context, state) {
               if(state.googleState?.isLoading??false){
                 return const Center(child: CircularProgressIndicator());
@@ -102,8 +100,8 @@ class _WelcomeViewState extends State<WelcomeView> {
           ),
           VerticalSpace(16),
           CustomRichText(
-            text1: "Already have an account? ",
-            text2: "Login",
+            text1: 'welcome.alreadyHaveAccount'.tr(),
+            text2: 'welcome.login'.tr(),
             onTap: () {
               context.read<AuthViewModel>().doIntent(NavigateToLoginIntent());
             },

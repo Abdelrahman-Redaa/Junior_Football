@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -219,7 +220,7 @@ class _UploadProgressIndicator extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            'Uploading ${(progress * 100).toInt()}%',
+            '${"videoRecord.uploading".tr()}${(progress * 100).toInt()}%',
             style: const TextStyle(color: Colors.white, fontSize: 13),
           ),
         ],
@@ -239,7 +240,7 @@ class _SavingIndicator extends StatelessWidget {
         color: Colors.black.withOpacity(0.6),
         borderRadius: BorderRadius.circular(30),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
@@ -252,7 +253,7 @@ class _SavingIndicator extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            'Saving…',
+            'videoRecord.saving'.tr(),
             style: TextStyle(color: Colors.white, fontSize: 13),
           ),
         ],

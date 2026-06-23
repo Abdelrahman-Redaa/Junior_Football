@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:junior_football/core/utilities/spaces.dart';
@@ -14,7 +15,7 @@ class SkillTwinView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.appTheme;
     return Scaffold(
-      appBar: AppBar(title: Text("Skill Twin")),
+      appBar: AppBar(title: Text("aiHub.skillTwin".tr())),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: BlocBuilder<AiViewModel, AiState>(
@@ -28,12 +29,12 @@ class SkillTwinView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Your Skill Twin",
+                  "skillTwin.yourSkillTwin".tr(),
                   style: theme.semiBold24.copyWith(fontWeight: FontWeight.w700),
                 ),
                 VerticalSpace(4),
                 Text(
-                  "Compare your performance with a matching pro player",
+                  "skillTwin.comparePerformance".tr(),
                   style: theme.regular16,
                   maxLines: 2,
                 ),
@@ -56,7 +57,7 @@ class SkillTwinView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Learn from ${skillTwin?.data?.twinPlayerName}",
+                          "${"skillTwin.learnFrom".tr()}${skillTwin?.data?.twinPlayerName}",
                           style: theme.semiBold24,
                         ),
                         VerticalSpace(24),
@@ -113,7 +114,7 @@ final class _PlayerCard extends StatelessWidget {
       ),
       child: ListTile(
         title: Text(
-          "$playerMatch%  Match",
+          "$playerMatch%${"skillTwin.match".tr()}",
           style: theme.regular16.copyWith(color: theme.secondary),
         ),
         subtitle: Text(

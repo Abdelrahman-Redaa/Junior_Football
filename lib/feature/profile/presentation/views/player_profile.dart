@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,7 +36,7 @@ class _PlayerProfileViewState extends State<PlayerProfileView> {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7FB),
       appBar: AppBar(
-        title: const Text('Player Profile'),
+        title: Text('profile.playerProfile'.tr()),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.maybePop(context),
@@ -78,7 +78,7 @@ class _PlayerProfileViewState extends State<PlayerProfileView> {
                                 : GetProfileByIdIntent(userId: userId),
                           );
                         },
-                        child: const Text('Retry'),
+                        child: Text('profile.retry'.tr()),
                       ),
                     ],
                   ),
@@ -233,7 +233,7 @@ class _PlayerProfileViewState extends State<PlayerProfileView> {
                                           ? Icons.person_remove_alt_1_outlined
                                           : Icons.person_add_alt_1_outlined,
                                     ),
-                              label: Text(isFollowing ? 'Unfollow' : 'Follow'),
+                              label: Text(isFollowing ? 'community.unfollow'.tr() : 'Follow'),
                             ),
                             SizedBox(height: 18.h),
                           ],
@@ -459,7 +459,7 @@ class _PlayerVideoGallery extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Videos',
+            'profile.videoGallery'.tr(),
             style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10.h),
@@ -479,7 +479,7 @@ class _PlayerVideoGallery extends StatelessWidget {
                     size: 32.r,
                   ),
                   SizedBox(height: 8.h),
-                  const Text('No videos yet'),
+                  Text('profile.noVideos'.tr()),
                 ],
               ),
             )
@@ -564,7 +564,7 @@ class _PlayerVideoTile extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Close'),
+                  child: Text('profile.close'.tr()),
                 ),
               ),
             ],

@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -72,7 +73,7 @@ class _WeeklyPlanScreenState extends State<WeeklyPlanScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          state.fullWeeklyPlan.errorMessage ?? "Error loading plan",
+                          state.fullWeeklyPlan.errorMessage ?? "weeklyPlan.errorLoading".tr(),
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 14.sp),
                         ),
@@ -81,7 +82,7 @@ class _WeeklyPlanScreenState extends State<WeeklyPlanScreen> {
                           onPressed: () {
                             context.read<HomeViewModel>().doIntent(GetFullWeeklyPlanIntent());
                           },
-                          child: const Text("Retry"),
+                          child: Text("weeklyPlan.retry".tr()),
                         ),
                       ],
                     ),
@@ -91,7 +92,7 @@ class _WeeklyPlanScreenState extends State<WeeklyPlanScreen> {
 
               final fullWeeklyPlan = state.fullWeeklyPlan.data;
               if (fullWeeklyPlan == null || fullWeeklyPlan.isEmpty) {
-                return const Center(child: Text("No data available"));
+                return Center(child: Text("weeklyPlan.noData".tr()));
               }
 
               final List<DayPlan> days = fullWeeklyPlan.map((e) {
@@ -99,7 +100,7 @@ class _WeeklyPlanScreenState extends State<WeeklyPlanScreen> {
                 int totalXp = e.sessions.fold(0, (sum, session) => sum + session.rewardXp);
                 
                 return DayPlan(
-                  dayLabel: e.isToday ? "Today" : "Upcoming",
+                  dayLabel: e.isToday ? "weeklyPlan.today".tr() : "weeklyPlan.upcoming".tr(),
                   dayName: e.dayName,
                   tasks: e.sessions.length,
                   minutes: totalMinutes,
@@ -147,7 +148,7 @@ class _WeeklyPlanScreenState extends State<WeeklyPlanScreen> {
           Expanded(
             child: Center(
               child: Text(
-                'Weekly Plan',
+                'home.weeklyPlan'.tr(),
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w600,
@@ -187,7 +188,7 @@ class _WeeklyPlanScreenState extends State<WeeklyPlanScreen> {
             Column(
               children: [
                 Text(
-                  'Week$_weekIndex',
+                  '${"weeklyPlan.week".tr()}$_weekIndex',
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: const Color(0xFF999999),
@@ -250,11 +251,11 @@ class _DayCard extends StatelessWidget {
   String get _difficultyLabel {
     switch (plan.difficulty) {
       case Difficulty.easy:
-        return 'Easy';
+        return "weeklyPlan.easy".tr();
       case Difficulty.medium:
-        return 'Medium';
+        return "weeklyPlan.medium".tr();
       case Difficulty.hard:
-        return 'Hard';
+        return "weeklyPlan.hard".tr();
     }
   }
 
@@ -363,7 +364,7 @@ class _DayCard extends StatelessWidget {
                     Flexible(
                       child: _statChip(
                         icon: Icons.format_list_bulleted,
-                        label: '${plan.tasks} Sessions',
+                        label: '${plan.tasks} ${"weeklyPlan.sessions".tr()}',
                         active: active,
                       ),
                     ),
@@ -371,7 +372,7 @@ class _DayCard extends StatelessWidget {
                     Flexible(
                       child: _statChip(
                         icon: Icons.access_time_rounded,
-                        label: '${plan.minutes} mins',
+                        label: '${plan.minutes} ${"weeklyPlan.mins".tr()}',
                         active: active,
                       ),
                     ),

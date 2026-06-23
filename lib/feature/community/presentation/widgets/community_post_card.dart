@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/routes/routes_name.dart';
@@ -96,7 +97,7 @@ class CommunityPostCard extends StatelessWidget {
               SizedBox(width: 8.w),
               TextButton(
                 onPressed: onUnfollowTap,
-                child: const Text('Unfollow'),
+                child: Text('communityPost.unfollow'.tr()),
               ),
             ],
             if (onDeleteTap != null)
@@ -156,7 +157,7 @@ class CommunityPostCard extends StatelessWidget {
                   onCommentTap ??
                   () => Navigator.pushNamed(context, AppRoutes.postView),
             ),
-            _action(Icons.share, "Share", context, onTap: () {}),
+            _action(Icons.share, "communityPost.share".tr(), context, onTap: () {}),
           ],
         ),
       ],

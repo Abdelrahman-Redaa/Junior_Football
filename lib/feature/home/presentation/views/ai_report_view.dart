@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -20,7 +20,7 @@ class AiReportView extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text("Ai report"),
+        title: Text("aiReportView.title".tr()),
         centerTitle: true,
       ),
 
@@ -34,39 +34,39 @@ class AiReportView extends StatelessWidget {
               _customOverallView(context, title: arg.data.skills.overAll.toStringAsFixed(1)),
 
               SizedBox(height: 22.h),
-              Text("Skills Breakdown", style: theme.semiBold24),
+              Text("aiReportView.skillsBreakdown".tr(), style: theme.semiBold24),
 
               SizedBox(height: 15.h),
               _skillProgressBar(
-                title: "passing",
+                title: "aiReportView.passing".tr(),
                 percentage: arg.data.skills.passing / 100,
                 context: context,
               ),
 
               SizedBox(height: 16.h),
               _skillProgressBar(
-                title: "Shooting",
+                title: "aiReportView.shooting".tr(),
                 percentage: arg.data.skills.shooting / 100,
                 context: context,
               ),
 
               SizedBox(height: 16.h),
               _skillProgressBar(
-                title: "Speed",
+                title: "aiReportView.speed".tr(),
                 percentage: arg.data.skills.speed / 100,
                 context: context,
               ),
 
               SizedBox(height: 16.h),
               _skillProgressBar(
-                title: "Positioning",
+                title: "aiReportView.positioning".tr(),
                 percentage: arg.data.skills.positioning / 100,
                 context: context,
               ),
 
               SizedBox(height: 16.h),
               _skillProgressBar(
-                title: "Reaction",
+                title: "aiReportView.reaction".tr(),
                 percentage: arg.data.skills.reaction / 100,
                 context: context,
               ),
@@ -86,7 +86,7 @@ class AiReportView extends StatelessWidget {
                   children: [
                     SvgPicture.asset(SVGAssets.iconView),
                     SizedBox(width: 5.w),
-                    Text("View recommendations "),
+                    Text("aiReportView.viewRecommendations".tr()),
                   ],
                 ),
               ),
@@ -184,7 +184,7 @@ class AiReportView extends StatelessWidget {
             ),
           ),
           SizedBox(height: 5.h),
-          Text("overall view", style: theme.semiBold24),
+          Text("aiReportView.overallView".tr(), style: theme.semiBold24),
           SizedBox(height: 5.h),
           Text(
             title,
@@ -196,7 +196,7 @@ class AiReportView extends StatelessWidget {
           ),
           SizedBox(height: 5.h),
           Text(
-            "out of 100",
+            "aiReportView.outOf100".tr(),
             style: theme.medium14.copyWith(color: theme.subTitle),
           ),
         ],

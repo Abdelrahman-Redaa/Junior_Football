@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:junior_football/core/utilities/show_toast_message.dart';
@@ -41,7 +42,7 @@ class _ProfileBody extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text('profile.title'.tr()),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_outlined),
@@ -53,7 +54,7 @@ class _ProfileBody extends StatelessWidget {
                   builder: (innerContext) => BlocProvider.value(
                     value: vm,
                     child: Scaffold(
-                      appBar: AppBar(title: const Text('Settings')),
+                      appBar: AppBar(title: Text('settings.title'.tr())),
                       body: SafeArea(
                         child: SingleChildScrollView(
                           padding: EdgeInsets.all(16.w),
@@ -97,7 +98,7 @@ class _ProfileBody extends StatelessWidget {
             }
             if (state.uploadVideo.isLoaded) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Video uploaded successfully')),
+                SnackBar(content: Text('profile.videoUploaded'.tr())),
               );
             }
             if (state.updateProfileState.isLoaded) {
@@ -166,16 +167,16 @@ class _ProfileBody extends StatelessWidget {
     final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        title: Text('logout.title'.tr()),
+        content: Text('logout.content'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
+            child: Text('logout.cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Logout'),
+            child: Text('logout.confirm'.tr()),
           ),
         ],
       ),
@@ -224,13 +225,13 @@ class _VideoGallerySection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(child: Text('Video Gallery', style: theme.semiBold24)),
+              Expanded(child: Text('profile.videoGallery'.tr(), style: theme.semiBold24)),
               TextButton.icon(
                 onPressed: isUploading
                     ? null
                     : () => _pickAndUploadVideo(context),
                 icon: const Icon(Icons.upload_file_outlined),
-                label: const Text('Upload'),
+                label: Text('profile.upload'.tr()),
               ),
             ],
           ),
@@ -261,7 +262,7 @@ class _VideoGallerySection extends StatelessWidget {
                     size: 32.r,
                   ),
                   SizedBox(height: 8.h),
-                  Text('No videos yet', style: theme.semiBold16),
+                  Text('profile.noVideos'.tr(), style: theme.semiBold16),
                   SizedBox(height: 4.h),
                   Text(
                     'Upload a video to show it on your profile',
@@ -366,7 +367,7 @@ class _VideoTile extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Close'),
+                  child: Text('profile.close'.tr()),
                 ),
               ),
             ],
@@ -455,7 +456,7 @@ class _ProfileHeader extends StatelessWidget {
                           );
                         },
                         icon: const Icon(Icons.edit_outlined),
-                        label: const Text('Edit Profile'),
+                        label: Text('profile.editProfile'.tr()),
                       ),
                     ),
                   ],
@@ -566,7 +567,7 @@ class _DetailsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Player Info', style: theme.semiBold24),
+          Text('profile.playerInfo'.tr(), style: theme.semiBold24),
           SizedBox(height: 8.h),
           _InfoRow(
             icon: Icons.badge_outlined,
@@ -735,7 +736,7 @@ class _ErrorState extends StatelessWidget {
             ElevatedButton(
               onPressed: () =>
                   context.read<ProfileViewModel>().doIntent(GetProfileIntent()),
-              child: const Text('Retry'),
+              child: Text('profile.retry'.tr()),
             ),
           ],
         ),

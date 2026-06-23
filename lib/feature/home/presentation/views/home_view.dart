@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -57,7 +58,7 @@ class _HomeViewState extends State<HomeView> {
 
                     SizedBox(height: 20.h),
                     Text(
-                      "Quick Actions",
+                      "home.quickActions".tr(),
                       style: theme.semiBold24.copyWith(color: theme.surface),
                     ),
                     SingleChildScrollView(
@@ -72,7 +73,7 @@ class _HomeViewState extends State<HomeView> {
                                 AppRoutes.uploadVideView,
                               );
                             },
-                            title: "Upload \nVideo",
+                            title: "home.uploadVideo".tr(),
                           ),
                           CustomCard(
                             image: AppAssets.recordVideo,
@@ -82,7 +83,7 @@ class _HomeViewState extends State<HomeView> {
                                 AppRoutes.recordVideoScreen,
                               );
                             },
-                            title: "Record \nVideo",
+                            title: "home.recordVideo".tr(),
                           ),
                           CustomCard(
                             image: AppAssets.analyzeWithAI,
@@ -92,7 +93,7 @@ class _HomeViewState extends State<HomeView> {
                                 AppRoutes.recordVideoScreen,
                               );
                             },
-                            title: "Analyze \nwith AI",
+                            title: "home.analyzeWithAi".tr(),
                           ),
                         ],
                       ),
@@ -100,7 +101,7 @@ class _HomeViewState extends State<HomeView> {
 
                     SizedBox(height: 25.h),
                     Text(
-                      "Today's Training",
+                      "home.todaysTraining".tr(),
                       style: theme.semiBold24.copyWith(color: theme.surface),
                     ),
 
@@ -141,7 +142,7 @@ class _HomeViewState extends State<HomeView> {
 
                     SizedBox(height: 25.h),
                     Text(
-                      "AI Insights",
+                      "home.aiInsights".tr(),
                       style: theme.semiBold24.copyWith(color: theme.surface),
                     ),
                     SizedBox(height: 8.h),
@@ -175,7 +176,7 @@ class _HomeViewState extends State<HomeView> {
 
                     SizedBox(height: 40.h),
                     Text(
-                      "Community",
+                      "home.community".tr(),
                       style: theme.semiBold24.copyWith(
                         color: theme.surface,
                         fontWeight: FontWeight.w600,
@@ -200,7 +201,7 @@ class _HomeViewState extends State<HomeView> {
                         }
                         final communityFeed = state.communityFeed.data;
                         if (communityFeed == null || communityFeed.isEmpty) {
-                          return const Center(child: Text("No Data"));
+                          return Center(child: Text("home.noData".tr()));
                         }
 
                         return Container(
@@ -260,7 +261,7 @@ class _HomeViewState extends State<HomeView> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Today's Session",
+                                "home.todaysSession".tr(),
                                 style: theme.semiBold24.copyWith(
                                   color: theme.surface,
                                 ),
@@ -273,7 +274,7 @@ class _HomeViewState extends State<HomeView> {
                                   );
                                 },
                                 child: Text(
-                                  "View more",
+                                  "home.viewMore".tr(),
                                   style: theme.regular14.copyWith(
                                     color: theme.primary,
                                   ),
@@ -323,7 +324,7 @@ class _HomeViewState extends State<HomeView> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Today's Session",
+                                "home.todaysSession".tr(),
                                 style: theme.semiBold24.copyWith(
                                   color: theme.surface,
                                 ),
@@ -336,7 +337,7 @@ class _HomeViewState extends State<HomeView> {
                                   );
                                 },
                                 child: Text(
-                                  "View more",
+                                  "home.viewMore".tr(),
                                   style: theme.regular14.copyWith(
                                     color: theme.primary,
                                   ),
@@ -346,8 +347,8 @@ class _HomeViewState extends State<HomeView> {
                           ),
                           SizedBox(height: 8.h),
                           CustomSpeedTraining(
-                            title: "Speed Training",
-                            subtitle: "Practice and improve your speed level",
+                            title: "home.speedSession".tr(),
+                            subtitle: "home.practiceSpeed".tr(),
                             duration: "45 mins",
                             rounds: "3 rounds/15 min",
                             level: "Medium",
@@ -362,13 +363,13 @@ class _HomeViewState extends State<HomeView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Recommendations",
+                          "home.recommendations".tr(),
                           style: theme.semiBold24.copyWith(
                             color: theme.surface,
                           ),
                         ),
                         Text(
-                          "View more",
+                          "home.viewMore".tr(),
                           style: theme.regular14.copyWith(color: theme.primary),
                         ),
                       ],
@@ -454,8 +455,8 @@ class _HomeViewState extends State<HomeView> {
                           Navigator.pushNamed(
                             context,
                             AppRoutes.sessionView,
-                            arguments: const TrainingVideoArgs(
-                              title: 'Shooting lesson',
+                            arguments: TrainingVideoArgs(
+                              title: 'home.shootingLesson'.tr(),
                               videoUrl: TrainingHubView.shootingVideo,
                             ),
                           );
@@ -486,7 +487,7 @@ class _HomeViewState extends State<HomeView> {
                               ),
                               SizedBox(width: 10.w),
                               Text(
-                                "Shooting lesson",
+                                "home.shootingLesson".tr(),
                                 style: theme.regular22.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -501,8 +502,8 @@ class _HomeViewState extends State<HomeView> {
                           Navigator.pushNamed(
                             context,
                             AppRoutes.sessionView,
-                            arguments: const TrainingVideoArgs(
-                              title: 'Passing lesson',
+                            arguments: TrainingVideoArgs(
+                              title: 'home.passingLesson'.tr(),
                               videoUrl: TrainingHubView.passingVideo,
                             ),
                           );
@@ -535,7 +536,7 @@ class _HomeViewState extends State<HomeView> {
                               ),
                               SizedBox(width: 10.w),
                               Text(
-                                "Passing lesson",
+                                "home.passingLesson".tr(),
                                 style: theme.regular22.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -573,7 +574,7 @@ class _HomeViewState extends State<HomeView> {
                                 );
                               },
                               child: Text(
-                                "Start Training",
+                                "home.startTraining".tr(),
                                 style: theme.semiBold24.copyWith(
                                   color: theme.secondary,
                                   fontWeight: FontWeight.w600,

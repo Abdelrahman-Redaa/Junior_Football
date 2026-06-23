@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,7 +16,7 @@ class RecentAiReport extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Recent History'),
+        title: Text('ai.recentHistory'.tr()),
       ),
       body: SafeArea(
         child: BlocBuilder<AiViewModel, AiState>(
@@ -27,9 +28,9 @@ class RecentAiReport extends StatelessWidget {
             final reports = state.recentReport?.data ?? [];
 
             if (reports.isEmpty) {
-              return const Center(
+              return Center(
                 child: Text(
-                  'No recent reports found',
+                  'recentAiReport.noReports'.tr(),
                   style: TextStyle(color: Colors.grey),
                 ),
               );
@@ -127,15 +128,15 @@ class CardRecentItem extends StatelessWidget {
   Widget _buildSkillsSummary(BuildContext context, SkillsEntity skills) {
     return Column(
       children: [
-        _buildSkillItem(context, 'Speed', skills.speed),
+        _buildSkillItem(context, 'aiReportView.speed'.tr(), skills.speed),
         const VerticalSpace(8),
-        _buildSkillItem(context, 'Shooting', skills.shooting),
+        _buildSkillItem(context, 'aiReportView.shooting'.tr(), skills.shooting),
         const VerticalSpace(8),
-        _buildSkillItem(context, 'Passing', skills.passing),
+        _buildSkillItem(context, 'aiReportView.passing'.tr(), skills.passing),
         const VerticalSpace(8),
-        _buildSkillItem(context, 'Positioning', skills.positioning),
+        _buildSkillItem(context, 'aiReportView.positioning'.tr(), skills.positioning),
         const VerticalSpace(8),
-        _buildSkillItem(context, 'Reaction', skills.reaction),
+        _buildSkillItem(context, 'aiReportView.reaction'.tr(), skills.reaction),
       ],
     );
   }
@@ -204,7 +205,7 @@ class CardRecentItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Similar Professional Player',
+                'recentAiReport.similarPlayer'.tr(),
                 style: theme.regular14.copyWith(
                   fontSize: 12.sp,
                   color: theme.grey,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -53,7 +54,7 @@ class _UploadVideViewState extends State<UploadVideView> {
         backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Text("Video input"),
+        title: Text("uploadVideo.videoInput".tr()),
         centerTitle: true,
       ),
       body: Padding(
@@ -62,15 +63,15 @@ class _UploadVideViewState extends State<UploadVideView> {
           child: Column(
             children: [
               Text(
-                "Choose how you'd like to provide your video",
+                "uploadVideo.chooseHow".tr(),
                 textAlign: TextAlign.center,
                 style: theme.regular16.copyWith(color: theme.surface),
               ),
               SizedBox(height: 24.h),
               _CustomActionCard(
                 image: AppAssets.recordVideo,
-                title: "Record Video",
-                subtitle: "Capture live footage\nwith your camera",
+                title: "uploadVideo.recordVideo".tr(),
+                subtitle: "uploadVideo.captureLive".tr(),
                 onTap: () {
                   Navigator.pushNamed(context, AppRoutes.recordVideoScreen);
                 },
@@ -100,8 +101,8 @@ class _UploadVideViewState extends State<UploadVideView> {
                   }
                   return _CustomActionCard(
                     image: AppAssets.uploadVideo,
-                    title: "Upload Video",
-                    subtitle: "Upload a video from \nyour device",
+                    title: "uploadVideo.uploadVideoTitle".tr(),
+                    subtitle: "uploadVideo.uploadFromDevice".tr(),
                     onTap: () {
                       context.read<HomeViewModel>().doIntent(
                         UploadVideoIntent(),
@@ -114,7 +115,7 @@ class _UploadVideViewState extends State<UploadVideView> {
               SizedBox(height: 50.h),
 
               CustomClick(
-                title: "View AI Report",
+                title: "uploadVideo.viewAiReport".tr(),
                 onTap: () {
                   Navigator.pushNamed(context, AppRoutes.recentAiReport);
                 },
@@ -125,7 +126,7 @@ class _UploadVideViewState extends State<UploadVideView> {
               SizedBox(height: 12.h),
 
               CustomClick(
-                title: "Cancel",
+                title: "uploadVideo.cancel".tr(),
                 onTap: () {
                   Navigator.pop(context);
                 },

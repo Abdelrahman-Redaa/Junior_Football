@@ -1,4 +1,4 @@
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:junior_football/core/constants/app_assets.dart';
@@ -18,7 +18,7 @@ class _InjuryProtectionViewState extends State<InjuryProtectionView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("injury Protection")),
+      appBar: AppBar(title: Text("injuryProtection.title".tr())),
       body: Padding(
         padding: EdgeInsets.only(top: 81, right: 24, left: 24),
         child: ListView.separated(
@@ -38,9 +38,9 @@ class _InjuryProtectionViewState extends State<InjuryProtectionView> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: ListTile(
-        title: Text(_protectedModel[index].title, style: theme.regular18),
+        title: Text(_protectedModel[index].title.tr(), style: theme.regular18),
         subtitle: Text(
-          _protectedModel[index].description,
+          _protectedModel[index].description.tr(),
           style: theme.medium14.copyWith(color: theme.subTitle),
         ),
         leading: CircleAvatar(
@@ -66,24 +66,24 @@ final class InjuryProtectionModel {
   static List<InjuryProtectionModel> get protectionModel => [
     InjuryProtectionModel(
       icon: SVGAssets.warmSvg,
-      title: "Warm Up Properly",
-      description: "Always warm up for 5–10 minutes before training",
+      title: "injuryProtection.warmUp",
+      description: "injuryProtection.warmUpDesc",
     ),
     InjuryProtectionModel(
       icon: SVGAssets.hydrationSvg,
-      title: "Stay Hydrated",
+      title: "injuryProtection.stayHydrated",
       description:
-      "Drink enough water during training to avoid fatigue and injury",
+      "injuryProtection.stayHydratedDesc",
     ),
     InjuryProtectionModel(
       icon: SVGAssets.strengthSvg,
-      title: "Strength & Stability",
-      description: "Build core strength to protect your muscles.",
+      title: "injuryProtection.strengthStability",
+      description: "injuryProtection.strengthStabilityDesc",
     ),
     InjuryProtectionModel(
       icon: SVGAssets.overtrainSvg,
-      title: "Don't Overtrain",
-      description: "Avoid pushing your body beyond its limits.",
+      title: "injuryProtection.dontOvertrain",
+      description: "injuryProtection.dontOvertrainDesc",
     ),
   ];
 }

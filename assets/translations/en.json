@@ -27,5 +27,285 @@
     "resourceExhausted": "Quota exceeded",
     "aborted": "Operation aborted",
     "internal": "Internal error"
+  },
+  "welcome": {
+    "welcomeTo": "Welcome to",
+    "appName": "Junior Football",
+    "createAccount": "Create New Account",
+    "alreadyHaveAccount": "Already have an account? ",
+    "login": "Login"
+  },
+  "auth": {
+    "signup": "Signup",
+    "fillDetails": "Fill in your details to start your journey!",
+    "fullName": "Full name",
+    "email": "Enter your email",
+    "yearOfBirth": "Year of birth",
+    "country": "Country",
+    "playingPosition": "Playing position",
+    "password": "password",
+    "signupBtn": "Signup",
+    "termsPrefix": "By signing in, you agree to our ",
+    "termsLink": "Terms, Privacy\n",
+    "policy": "Policy",
+    "and": " and ",
+    "cookieUse": " Cookie Use.",
+    "loginTitle": "Login",
+    "loginSubtitle": "Welcome back!",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account? ",
+    "register": "Register now",
+    "enterFullName": "Please enter your full name",
+    "enterEmail": "Please enter your email",
+    "enterYearOfBirth": "Please enter your year of birth",
+    "enterPassword": "Please enter your password",
+    "continue": "Continue"
+  },
+  "nav": {
+    "home": "Home",
+    "community": "Community",
+    "ai": "AI",
+    "profile": "Profile"
+  },
+  "home": {
+    "title": "Home",
+    "weeklyPlan": "Weekly Plan",
+    "trainingHub": "Training Hub",
+    "noSession": "No daily sessions available",
+    "upload": "Upload",
+    "analyzeVideo": "Analyze Video",
+    "speedSession": "Speed Session",
+    "aiRecommendation": "AI Recommendation",
+    "aiReport": "AI Report",
+    "viewMore": "View more",
+    "weekProgress": "week progress",
+    "quickActions": "Quick Actions",
+    "uploadVideo": "Upload \nVideo",
+    "recordVideo": "Record \nVideo",
+    "analyzeWithAi": "Analyze \nwith AI",
+    "todaysTraining": "Today's Training",
+    "aiInsights": "AI Insights",
+    "community": "Community",
+    "todaysSession": "Today's Session",
+    "practiceSpeed": "Practice and improve your speed level",
+    "recommendations": "Recommendations",
+    "shootingLesson": "Shooting lesson",
+    "passingLesson": "Passing lesson",
+    "startTraining": "Start Training",
+    "noData": "No Data",
+    "sessionTitle": "Speed training",
+    "instructions": "Instructions",
+    "sessionDuration": "45mins/ 3rounds",
+    "instruction1": "Stand on the balls of your feet, lean your upper body slightly forward and keep your eyes focused straight ahead.",
+    "instruction2": "Sprint at maximum speed for 10–20 meters, keep your body upright and stable and use your arms for power (strong arm swings).",
+    "instruction3": "Jog or walk back to the starting point and take a deep breath before starting the next rep."
+  },
+  "community": {
+    "title": "Community",
+    "followedSuccessfully": "Followed successfully",
+    "unfollowedSuccessfully": "Unfollowed successfully",
+    "postDeleted": "Post deleted successfully",
+    "retry": "Retry",
+    "deletePost": "Delete post",
+    "deletePostConfirm": "Are you sure you want to delete this post?",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "postView": "Post View",
+    "unfollow": "Unfollow"
+  },
+  "profile": {
+    "title": "Profile",
+    "settings": "Settings",
+    "editProfile": "Edit Profile",
+    "videoGallery": "Video Gallery",
+    "noVideos": "No videos yet",
+    "playerInfo": "Player Info",
+    "retry": "Retry",
+    "close": "Close",
+    "upload": "Upload",
+    "videoUploaded": "Video uploaded successfully",
+    "playerProfile": "Player Profile"
+  },
+  "sessionLevel": {
+    "backToDaily": "Back to daily session",
+    "viewWeeklyPlan": "View weekly plan",
+    "sessionCompleted": "Session Completed!",
+    "completedSub": "What a great work of you today, keep on improving day by day.",
+    "goodJob": "Good Job! ",
+    "goodJobSub": "Not bad but you can do better next time",
+    "workHard": "Work Hard!",
+    "workHardSub": "you can still do better next time with practcing",
+    "sessionSummery": "Session Summery",
+    "trainingCompleted": "Training completed",
+    "totalDuration": "Total duration"
+  },
+  "weeklyPlan": {
+    "errorLoading": "Error loading plan",
+    "retry": "Retry",
+    "noData": "No data available",
+    "today": "Today",
+    "upcoming": "Upcoming",
+    "week": "Week",
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard",
+    "sessions": "Sessions",
+    "mins": "mins"
+  },
+  "uploadVideo": {
+    "videoInput": "Video input",
+    "chooseHow": "Choose how you'd like to provide your video",
+    "recordVideo": "Record Video",
+    "captureLive": "Capture live footage\nwith your camera",
+    "uploadVideoTitle": "Upload Video",
+    "uploadFromDevice": "Upload a video from \nyour device",
+    "viewAiReport": "View AI Report",
+    "cancel": "Cancel"
+  },
+  "aiReportView": {
+    "title": "Ai report",
+    "skillsBreakdown": "Skills Breakdown",
+    "passing": "Passing",
+    "shooting": "Shooting",
+    "speed": "Speed",
+    "positioning": "Positioning",
+    "reaction": "Reaction",
+    "viewRecommendations": "View recommendations",
+    "overallView": "overall view",
+    "outOf100": "out of 100"
+  },
+  "aiRecommendations": {
+    "title": "AI Recommendations",
+    "noRecommendations": "No recommendations available"
+  },
+  "analyzeVideo": {
+    "title": "Analyzing",
+    "analyzing": "Analyzing Your video...",
+    "takeFewSeconds": "This may take a few seconds",
+    "analyzingShort": "Analyzing..."
+  },
+  "postView": {
+    "title": "Post View",
+    "anonymous": "Anonymous",
+    "comments": "Comments",
+    "noComments": "No comments yet",
+    "addComment": "Add a comment..."
+  },
+  "videoRecord": {
+    "uploading": "Uploading ",
+    "saving": "Saving…"
+  },
+  "createPost": {
+    "whatsOnYourMind": "What's on your mind?",
+    "photo": "Photo",
+    "change": "Change",
+    "post": "Post"
+  },
+  "communityPost": {
+    "share": "Share",
+    "unfollow": "Unfollow"
+  },
+  "aiHub": {
+    "title": "Ai Hub",
+    "importGameFootage": "Import your game footage",
+    "recentAiReport": "Recent Ai report",
+    "viewLatestAnalysis": "View latest analysis",
+    "skillTwin": "Skill twin",
+    "aiPlayerComparison": "Ai player comparison",
+    "injuryPrediction": "Injury Prediction",
+    "riskAssessmentInsight": "Risk assessment insight",
+    "chatWithAi": "Chat with Ai",
+    "askAiAnyQuestion": "Ask Ai any question"
+  },
+  "injuryProtection": {
+    "title": "Injury Protection",
+    "warmUp": "Warm Up Properly",
+    "warmUpDesc": "Always warm up for 5–10 minutes before training",
+    "stayHydrated": "Stay Hydrated",
+    "stayHydratedDesc": "Drink enough water during training to avoid fatigue and injury",
+    "strengthStability": "Strength & Stability",
+    "strengthStabilityDesc": "Build core strength to protect your muscles.",
+    "dontOvertrain": "Don't Overtrain",
+    "dontOvertrainDesc": "Avoid pushing your body beyond its limits."
+  },
+  "recentAiReport": {
+    "noReports": "No recent reports found",
+    "similarPlayer": "Similar Professional Player"
+  },
+  "skillTwin": {
+    "yourSkillTwin": "Your Skill Twin",
+    "comparePerformance": "Compare your performance with a matching pro player",
+    "learnFrom": "Learn from ",
+    "match": " Match"
+  },
+  "logout": {
+    "title": "Logout",
+    "content": "Are you sure you want to logout?",
+    "cancel": "Cancel",
+    "confirm": "Logout"
+  },
+  "editProfile": {
+    "title": "Edit Your Profile",
+    "bio": "Bio",
+    "height": "Height (cm)",
+    "weight": "Weight (kg)",
+    "preferredFoot": "Preferred Foot",
+    "team": "Team",
+    "right": "Right",
+    "left": "Left",
+    "both": "Both",
+    "updateProfile": "Update Profile",
+    "successMessage": "Profile updated successfully!"
+  },
+  "settings": {
+    "title": "Settings",
+    "changePassword": "Change Password",
+    "changePasswordDesc": "Update your account password",
+    "support": "Support",
+    "supportDesc": "Help center and contact us",
+    "darkMode": "Dark Mode",
+    "darkModeDesc": "Toggle dark mode appearance",
+    "arabicLanguage": "Arabic Language",
+    "arabicLanguageDesc": "Switch application language",
+    "logout": "Logout",
+    "logoutDesc": "Sign out from this account"
+  },
+  "changePassword": {
+    "title": "Change Password",
+    "subtitle": "Create a new password",
+    "description": "Your new password must be different from previous used passwords.",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "savePassword": "Save Password",
+    "successMessage": "Password changed successfully!",
+    "failureMessage": "Failed to change password",
+    "enterCurrentPassword": "Please enter your current password",
+    "enterNewPassword": "Please enter a new password",
+    "minLength": "Password must be at least 6 characters",
+    "confirmNewPassword": "Please confirm your new password",
+    "passwordsNotMatch": "Passwords do not match"
+  },
+  "support": {
+    "title": "Support",
+    "howCanWeHelp": "How can we help you?",
+    "getInTouch": "Get in touch with our developer directly.",
+    "developerName": "Developer Name",
+    "developerNameValue": "Abdelrahman Reda Ebrahim",
+    "title_label": "Title",
+    "titleValue": "Flutter Developer",
+    "email": "Email",
+    "phone": "Phone Number",
+    "linkedIn": "LinkedIn",
+    "linkedInValue": "Abdelrahman Reda",
+    "github": "GitHub Repository",
+    "githubValue": "Junior_Football"
+  },
+  "ai": {
+    "chatTitle": "Ai Chat",
+    "recentHistory": "Recent History"
+  },
+  "permissions": {
+    "continue": "Continue"
   }
 }

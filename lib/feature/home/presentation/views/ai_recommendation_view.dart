@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/utilities/theme_extension.dart';
@@ -15,7 +16,7 @@ class AiRecommendationView extends StatelessWidget {
       backgroundColor: theme.backgroundColor,
       appBar: AppBar(
         title: Text(
-          "AI Recommendations",
+          "aiRecommendations.title".tr(),
           style: theme.semiBold24.copyWith(fontSize: 20.sp, color: theme.textColor),
         ),
         centerTitle: true,
@@ -51,7 +52,7 @@ class AiRecommendationView extends StatelessWidget {
           Icon(Icons.analytics_outlined, size: 64.sp, color: theme.grey),
           SizedBox(height: 16.h),
           Text(
-            "No recommendations available",
+            "aiRecommendations.noRecommendations".tr(),
             style: theme.medium14.copyWith(color: theme.subTitle, fontSize: 16.sp),
           ),
         ],

@@ -1,6 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:junior_football/core/routes/routes_name.dart';
 import 'package:junior_football/core/utilities/theme_extension.dart';
 import 'package:junior_football/feature/profile/presentation/widgets/card_content.dart';
 import 'package:junior_football/feature/profile/presentation/view_model/profile_view_model.dart';
@@ -18,8 +18,8 @@ class SettingSections extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _SettingsTile(
-          title: 'Change Password',
-          desc: 'Update your account password',
+          title: 'settings.changePassword'.tr(),
+          desc: 'settings.changePasswordDesc'.tr(),
           icon: Icons.lock_outline,
           onTap: () {
             final vm = context.read<ProfileViewModel>();
@@ -36,8 +36,8 @@ class SettingSections extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         _SettingsTile(
-          title: 'Support',
-          desc: 'Help center and contact us',
+          title: 'settings.support'.tr(),
+          desc: 'settings.supportDesc'.tr(),
           icon: Icons.support_agent_outlined,
           onTap: () {
             Navigator.push(
@@ -48,8 +48,8 @@ class SettingSections extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         _SettingsToggleTile(
-          title: 'Dark Mode',
-          desc: 'Toggle dark mode appearance',
+          title: 'settings.darkMode'.tr(),
+          desc: 'settings.darkModeDesc'.tr(),
           icon: Icons.dark_mode_outlined,
           value: false, // Wire up later
           onChanged: (value) {
@@ -58,12 +58,16 @@ class SettingSections extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         _SettingsToggleTile(
-          title: 'Arabic Language',
-          desc: 'Switch application language',
+          title: 'settings.arabicLanguage'.tr(),
+          desc: 'settings.arabicLanguageDesc'.tr(),
           icon: Icons.language_outlined,
-          value: false, // Wire up later
-          onChanged: (value) {
-            // Wire up later
+          value: context.locale.languageCode == 'ar',
+          onChanged: (value) async {
+            if (value) {
+              await context.setLocale(const Locale('ar'));
+            } else {
+              await context.setLocale(const Locale('en'));
+            }
           },
         ),
         const SizedBox(height: 12),
@@ -217,12 +221,12 @@ class _LogoutTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Logout',
+                    'settings.logout'.tr(),
                     style: theme.semiBold16.copyWith(color: theme.red),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Sign out from this account',
+                    'settings.logoutDesc'.tr(),
                     style: theme.medium14.copyWith(color: theme.subTitle),
                   ),
                 ],

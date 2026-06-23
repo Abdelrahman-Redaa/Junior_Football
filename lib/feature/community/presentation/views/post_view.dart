@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -60,7 +60,7 @@ class _PostViewState extends State<PostView> {
     return BlocProvider.value(
       value: _viewModel,
       child: Scaffold(
-        appBar: AppBar(title: const Text('Post View')),
+        appBar: AppBar(title: Text('postView.title'.tr())),
         body: BlocBuilder<CommunityViewModel, CommunityState>(
           builder: (context, state) {
             // Find the updated post in the list if it exists, otherwise use the widget.post
@@ -85,7 +85,7 @@ class _PostViewState extends State<PostView> {
                             border: Border.all(color: theme.borderColor, width: 1.w),
                           ),
                           child: CommunityPostCard(
-                            name: currentPost.userFullName ?? "Anonymous",
+                            name: currentPost.userFullName ?? "postView.anonymous".tr(),
                             time: currentPost.createdAt ?? "",
                             image: currentPost.userProfilePicture ?? "",
                             content: currentPost.content,
@@ -97,7 +97,7 @@ class _PostViewState extends State<PostView> {
                         ),
                         SizedBox(height: 24.h),
                         Text(
-                          "Comments (${currentPost.commentsCount ?? 0})",
+                          "${"postView.comments".tr()} (${currentPost.commentsCount ?? 0})",
                           style: theme.semiBold24,
                         ),
                         SizedBox(height: 16.h),
@@ -109,13 +109,13 @@ class _PostViewState extends State<PostView> {
                             itemBuilder: (context, index) {
                               final comments= currentPost.comments??[];
                               if(comments.isEmpty){
-                                return const Center(child: Text("No comments yet"));
+                                return Center(child: Text("postView.noComments".tr()));
                               }
                               return CommentItem(comment: currentPost.comments![index],);
                             },
                           )
                         else
-                          const Center(child: Text("No comments yet")),
+                          Center(child: Text("postView.noComments".tr())),
                       ],
                     ),
                   ),
@@ -150,7 +150,7 @@ class _PostViewState extends State<PostView> {
               child: TextField(
                 controller: _commentController,
                 decoration: InputDecoration(
-                  hintText: "Add a comment...",
+                  hintText: "postView.addComment".tr(),
                   contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.r),

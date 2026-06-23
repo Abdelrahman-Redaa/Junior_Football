@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:junior_football/core/constants/app_assets.dart';
@@ -52,13 +53,13 @@ class PageViewBody extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: () {},
               icon: Icon(Icons.file_download_done_rounded),
-              label: Text("Back to daily session"),
+              label: Text("sessionLevel.backToDaily".tr()),
             ),
             VerticalSpace(16),
             OutlinedButton.icon(
               onPressed: () {},
               icon: Icon(Icons.calendar_month_outlined),
-              label: Text("View weekly plan"),
+              label: Text("sessionLevel.viewWeeklyPlan".tr()),
             ),
           ],
         ),
@@ -141,8 +142,8 @@ class _SessionLevelModel {
   static List<_SessionLevelModel> get sessionLevelModel => [
     _SessionLevelModel(
       image: AppAssets.target,
-      title: "Session Completed!",
-      subTitle: 'What a great work of you today, keep on improving day by day.',
+      title: "sessionLevel.sessionCompleted".tr(),
+      subTitle: 'sessionLevel.completedSub'.tr(),
       sessionSummery: _SessionSummery(
         iconColor: Color(0xff1C7731),
         bgColor: Color(0xffB9D7C0),
@@ -153,8 +154,8 @@ class _SessionLevelModel {
     ),
     _SessionLevelModel(
       image: AppAssets.flash,
-      title: "Good Job! ",
-      subTitle: 'Not bad but you can do better next time',
+      title: "sessionLevel.goodJob".tr(),
+      subTitle: 'sessionLevel.goodJobSub'.tr(),
       sessionSummery: _SessionSummery(
         iconColor: Color(0xffFFCC00),
         bgColor: Color(0xffFFFAE6),
@@ -165,8 +166,8 @@ class _SessionLevelModel {
     ),
     _SessionLevelModel(
       image: AppAssets.complete,
-      title: "Work Hard!",
-      subTitle: 'you can still do better next time with practcing',
+      title: "sessionLevel.workHard".tr(),
+      subTitle: 'sessionLevel.workHardSub'.tr(),
       sessionSummery: _SessionSummery(
         iconColor: Color(0xffFF3B30),
         bgColor: Color(0xffFFECEB),
@@ -179,9 +180,9 @@ class _SessionLevelModel {
 }
 
 class _SessionSummery {
-  final String title = "Session Summery";
-  final String subTitle = "Training completed";
-  final String thirdTitle = "Total duration";
+  final String title = "sessionLevel.sessionSummery".tr();
+  final String subTitle = "sessionLevel.trainingCompleted".tr();
+  final String thirdTitle = "sessionLevel.totalDuration".tr();
   final Color iconColor;
   final Color bgColor;
   final String mainImage;

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:junior_football/core/routes/routes_name.dart';
@@ -48,9 +49,9 @@ class WeeklyPlanCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Weekly Plan',
-                    style: TextStyle(
+                  Text(
+                    'home.weeklyPlan'.tr(),
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF1A1A1A),
@@ -61,9 +62,9 @@ class WeeklyPlanCard extends StatelessWidget {
                     onTap: () {
                       Navigator.pushNamed(context, AppRoutes.weeklyPlanView);
                     },
-                    child: const Text(
-                      'View more',
-                      style: TextStyle(
+                    child: Text(
+                      'home.viewMore'.tr(),
+                      style: const TextStyle(
                         fontSize: 13,
                         color: Color(0xFF888888),
                         fontWeight: FontWeight.w400,
@@ -86,7 +87,7 @@ class WeeklyPlanCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                          Text(
-                          'week progress',
+                          'home.weekProgress'.tr(),
                           style: TextStyle(
                             fontSize: 13,
                             color: Color(0xFF666666),

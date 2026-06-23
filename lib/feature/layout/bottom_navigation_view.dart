@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -98,7 +99,12 @@ class _BottomNavigationViewState extends State<BottomNavigationView> {
   Widget _buildItem(String icon, int index, dynamic theme) {
     final bool isSelected = selectedIndex == index;
 
-    final List<String> labels = ['Home', 'Community', 'AI', 'Profile'];
+    final List<String> labels = [
+      'nav.home'.tr(),
+      'nav.community'.tr(),
+      'nav.ai'.tr(),
+      'nav.profile'.tr(),
+    ];
 
     return GestureDetector(
       onTap: () => changeTab(index),

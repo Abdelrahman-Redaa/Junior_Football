@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -113,19 +114,19 @@ class _SignUpViewState extends State<SignUpView> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Signup", style: theme.semiBold28),
+                Text('auth.signup'.tr(), style: theme.semiBold28),
                 VerticalSpace(8),
                 Text(
-                  "Fill in your details to start your journey!",
+                  'auth.fillDetails'.tr(),
                   style: theme.regular16.copyWith(color: theme.subTitle),
                 ),
                 VerticalSpace(47),
                 CustomTextFormField(
                   controller: _fullNameController,
-                  hintText: "Full name",
+                  hintText: 'auth.fullName'.tr(),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your full name';
+                      return 'auth.enterFullName'.tr();
                     }
                     return null;
                   },
@@ -134,24 +135,22 @@ class _SignUpViewState extends State<SignUpView> {
                 CustomTextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return 'auth.enterEmail'.tr();
                     }
                     return null;
                   },
-
                   controller: _emailController,
-                  hintText: "Enter your email",
+                  hintText: 'auth.email'.tr(),
                 ),
                 VerticalSpace(16),
                 CustomTextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your year of birth';
+                      return 'auth.enterYearOfBirth'.tr();
                     }
                     return null;
                   },
-
-                  hintText: 'year of birth',
+                  hintText: 'auth.yearOfBirth'.tr(),
                   controller: _yearOfBirthController,
                   readOnly: true,
                   onTap: () {
@@ -174,7 +173,7 @@ class _SignUpViewState extends State<SignUpView> {
                   onChange: (selectCountry) {
                     _selectedCountry.value = selectCountry!;
                   },
-                  hintText: "Country",
+                  hintText: 'auth.country'.tr(),
                   items: ["Egypt", "Syria", "Palestine"],
                 ),
 
@@ -186,18 +185,18 @@ class _SignUpViewState extends State<SignUpView> {
                   },
                   items: positions,
                   itemBuilder: (value) => value,
-                  hintText: "Playing position",
+                  hintText: 'auth.playingPosition'.tr(),
                 ),
                 VerticalSpace(16),
                 CustomTextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
+                      return 'auth.enterPassword'.tr();
                     }
                     return null;
                   },
                   controller: _passwordController,
-                  hintText: "password",
+                  hintText: 'auth.password'.tr(),
                   isPassword: true,
                 ),
                 VerticalSpace(44),
@@ -229,7 +228,7 @@ class _SignUpViewState extends State<SignUpView> {
                           _viewModel.doIntent(SignupIntent(signupModel));
                         }
                       },
-                      child: Text("Signup"),
+                      child: Text('auth.signupBtn'.tr()),
                     );
                   },
                 ),
@@ -251,23 +250,23 @@ class _SignUpViewState extends State<SignUpView> {
         text: TextSpan(
           children: [
             TextSpan(
-              text: 'By signing in, you agree to our ',
+              text: 'auth.termsPrefix'.tr(),
               style: theme.regular14.copyWith(color: theme.subTitle),
             ),
             TextSpan(
-              text: 'Terms, Privacy\n',
+              text: 'auth.termsLink'.tr(),
               style: theme.medium14.copyWith(color: theme.primary),
             ),
             TextSpan(
-              text: 'Policy',
+              text: 'auth.policy'.tr(),
               style: theme.medium14.copyWith(color: theme.primary),
             ),
             TextSpan(
-              text: ' and ',
+              text: 'auth.and'.tr(),
               style: theme.regular14.copyWith(color: theme.subTitle),
             ),
             TextSpan(
-              text: ' Cookie Use.',
+              text: 'auth.cookieUse'.tr(),
               style: theme.medium14.copyWith(color: theme.primary),
             ),
           ],

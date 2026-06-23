@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -60,8 +61,8 @@ class _AnalyzeVideoViewState extends State<AnalyzeVideoView> {
         backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: const Text(
-          "Analyzing",
+        title: Text(
+          "analyzeVideo.title".tr(),
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -75,20 +76,20 @@ class _AnalyzeVideoViewState extends State<AnalyzeVideoView> {
         child: Column(
           children: [
             Text(
-              "Analyzing Your video...",
+              "analyzeVideo.analyzing".tr(),
               style: theme.semiBold24.copyWith(
                 color: theme.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
             SizedBox(height: 8.h),
-            Text("This may take a few seconds", style: theme.regular18),
+            Text("analyzeVideo.takeFewSeconds".tr(), style: theme.regular18),
             Spacer(),
 
             LoadingIndicator(),
             SizedBox(height: 60.h),
             Text(
-              "Analyzing...",
+              "analyzeVideo.analyzingShort".tr(),
               style: theme.semiBold24.copyWith(
                 color: theme.primary,
                 fontWeight: FontWeight.w600,
@@ -96,7 +97,7 @@ class _AnalyzeVideoViewState extends State<AnalyzeVideoView> {
             ),
             Spacer(),
             CustomClick(
-              title: "Cancel",
+              title: "uploadVideo.cancel".tr(),
               onTap: () {
                 Navigator.pop(context);
               },

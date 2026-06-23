@@ -24,7 +24,7 @@ class JuniorFootballApp extends StatelessWidget {
           theme: LightTheme().themeData,
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
-          locale: Locale('en'),
+          locale: context.locale,
           initialRoute: initRoute,
           onGenerateRoute: Routes.onGenerateRoute,
         );

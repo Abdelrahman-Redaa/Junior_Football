@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,7 +32,7 @@ class _CommunityViewState extends State<CommunityView> {
       create: (context) =>
           getIt<CommunityViewModel>()..doIntent(GetCommunityPostsIntent()),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Community'), centerTitle: false),
+        appBar: AppBar(title: Text('community.title'.tr()), centerTitle: false),
         body: BlocListener<CommunityViewModel, CommunityState>(
           listenWhen: (previous, current) =>
               previous.followUserState != current.followUserState ||
@@ -49,7 +50,7 @@ class _CommunityViewState extends State<CommunityView> {
             }
             if (state.followUserState.isLoaded) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Followed successfully')),
+                SnackBar(content: Text('community.followedSuccessfully'.tr())),
               );
             }
             if (state.unfollowUserState.isError) {
@@ -63,7 +64,7 @@ class _CommunityViewState extends State<CommunityView> {
             }
             if (state.unfollowUserState.isLoaded) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Unfollowed successfully')),
+                SnackBar(content: Text('community.unfollowedSuccessfully'.tr())),
               );
             }
             if (state.deletePostState.isError) {
@@ -77,7 +78,7 @@ class _CommunityViewState extends State<CommunityView> {
             }
             if (state.deletePostState.isLoaded) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Post deleted successfully')),
+                SnackBar(content: Text('community.postDeleted'.tr())),
               );
             }
           },
@@ -107,7 +108,7 @@ class _CommunityViewState extends State<CommunityView> {
                               onPressed: () => context
                                   .read<CommunityViewModel>()
                                   .doIntent(GetCommunityPostsIntent()),
-                              child: const Text("Retry"),
+                              child: Text('community.retry'.tr()),
                             ),
                           ],
                         ),
@@ -199,16 +200,16 @@ class _CommunityViewState extends State<CommunityView> {
     final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Delete post'),
-        content: const Text('Are you sure you want to delete this post?'),
+        title: Text('community.deletePost'.tr()),
+        content: Text('community.deletePostConfirm'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
+            child: Text('community.cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Delete'),
+            child: Text('community.delete'.tr()),
           ),
         ],
       ),

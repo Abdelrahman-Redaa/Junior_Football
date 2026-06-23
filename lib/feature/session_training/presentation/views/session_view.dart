@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:junior_football/core/utilities/spaces.dart';
 import 'package:junior_football/core/utilities/theme_extension.dart';
@@ -28,8 +28,8 @@ class _SessionViewState extends State<SessionView> {
     'https://footballfc.runasp.net/uploads/videos/15003242-488c-47de-a470-a607a7a45971.mp4',
   ];
   late final String videoUrl =
-      widget.args?.videoUrl ?? _videoUrls[Random().nextInt(_videoUrls.length)];
-  late final String title = widget.args?.title ?? "Speed training";
+      widget.args?.videoUrl ?? _videoUrls[0]; // Avoid Random() for simplicity
+  late final String title = widget.args?.title ?? "home.sessionTitle".tr();
 
   @override
   void initState() {
@@ -56,7 +56,7 @@ class _SessionViewState extends State<SessionView> {
                 children: [
                   _buildSpeedTraining(context),
                   const VerticalSpace(32),
-                  Text("Instructions", style: theme.medium14),
+                  Text("home.instructions".tr(), style: theme.medium14),
                   const VerticalSpace(20),
                   _buildInstructions(context),
                   const VerticalSpace(100),
@@ -72,9 +72,9 @@ class _SessionViewState extends State<SessionView> {
   Widget _buildInstructions(BuildContext context) {
     final theme = context.appTheme;
     final listOfInstructions = [
-      "Stand on the balls of your feet, lean your upper body slightly forward and keep your eyes focused straight ahead.",
-      "Sprint at maximum speed for 10–20 meters, keep your body upright and stable and use your arms for power (strong arm swings).",
-      "Jog or walk back to the starting point and take a deep breath before starting the next rep.",
+      "home.instruction1".tr(),
+      "home.instruction2".tr(),
+      "home.instruction3".tr(),
     ];
     return Column(
       children: List.generate(
@@ -105,7 +105,7 @@ class _SessionViewState extends State<SessionView> {
         Icon(Icons.access_time_filled_outlined, color: theme.neutral),
         const HorizontalSpace(5),
         Text(
-          "45mins/ 3rounds",
+          "home.sessionDuration".tr(),
           style: theme.medium14.copyWith(color: theme.neutral),
         ),
       ],

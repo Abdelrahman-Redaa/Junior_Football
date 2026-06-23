@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:junior_football/core/constants/app_assets.dart';
@@ -19,7 +20,7 @@ class _AiHubViewState extends State<AiHubView> {
   Widget build(BuildContext context) {
     final theme = context.appTheme;
     return Scaffold(
-      appBar: AppBar(title: Text("Ai Hub")),
+      appBar: AppBar(title: Text("aiHub.title".tr())),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 37),
         child: GridView.builder(
@@ -94,43 +95,43 @@ class _CardModel {
       routeName: AppRoutes.recordVideoScreen,
       assetName: SVGAssets.camera,
       bgColor: Color(0xff28A745),
-      title: "Record video",
-      description: "Capture live footage",
+      title: "uploadVideo.recordVideo".tr(),
+      description: "uploadVideo.captureLive".tr(),
     ),
     _CardModel(
       routeName: AppRoutes.uploadVideView,
       assetName: SVGAssets.upload,
       bgColor: Color(0xffFF8C42),
-      title: "Upload Video",
-      description: "Import your game footage",
+      title: "uploadVideo.uploadVideoTitle".tr(),
+      description: "aiHub.importGameFootage".tr(),
     ),
     _CardModel(
       routeName: AppRoutes.recentAiReport,
       assetName: SVGAssets.report,
       bgColor: Color(0xffFFD700),
-      title: "Recent Ai report",
-      description: "View latest analysis",
+      title: "aiHub.recentAiReport".tr(),
+      description: "aiHub.viewLatestAnalysis".tr(),
     ),
     _CardModel(
       routeName: AppRoutes.skillTwinView,
       assetName: SVGAssets.twin,
       bgColor: Color(0xff9495AB),
-      title: "skill twin",
-      description: "Ai player comparison",
+      title: "aiHub.skillTwin".tr(),
+      description: "aiHub.aiPlayerComparison".tr(),
     ),
     _CardModel(
       routeName: AppRoutes.injuryProtectionView,
       assetName: SVGAssets.analysis,
       bgColor: Color(0xff3CB371),
-      title: "Injury Prediction",
-      description: "Risk assessment insight",
+      title: "aiHub.injuryPrediction".tr(),
+      description: "aiHub.riskAssessmentInsight".tr(),
     ),
     _CardModel(
       routeName: AppRoutes.chatBotView,
       assetName: SVGAssets.chat,
       bgColor: Color(0xff6A5ACD),
-      title: "Chat with Ai",
-      description: "Ask Ai any question",
+      title: "aiHub.chatWithAi".tr(),
+      description: "aiHub.askAiAnyQuestion".tr(),
     ),
   ];
 }

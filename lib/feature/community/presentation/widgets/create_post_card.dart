@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -76,7 +77,7 @@ class _CreatePostCardState extends State<CreatePostCard> {
                       textInputAction: TextInputAction.newline,
                       style: TextStyle(fontSize: 15.sp, color: Colors.black87),
                       decoration: InputDecoration(
-                        hintText: "What's on your mind?",
+                        hintText: "createPost.whatsOnYourMind".tr(),
                         hintStyle: TextStyle(
                           color: Colors.grey.shade400,
                           fontSize: 15.sp,
@@ -154,7 +155,7 @@ class _CreatePostCardState extends State<CreatePostCard> {
                           ),
                           SizedBox(width: 6.w),
                           Text(
-                            _selectedFile == null ? "Photo" : "Change",
+                            _selectedFile == null ? "createPost.photo".tr() : "createPost.change".tr(),
                             style: TextStyle(
                               color: Colors.grey.shade700,
                               fontWeight: FontWeight.w500,
@@ -204,7 +205,7 @@ class _CreatePostCardState extends State<CreatePostCard> {
                           child: state.commentPostState.isLoading
                               ? CircularProgressIndicator()
                               : Text(
-                                  "Post",
+                                  "createPost.post".tr(),
                                   style: TextStyle(
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.bold,

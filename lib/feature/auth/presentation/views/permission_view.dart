@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:junior_football/core/routes/routes_name.dart';
 import 'package:junior_football/core/utilities/spaces.dart';
@@ -58,7 +59,7 @@ class PermissionView extends StatelessWidget {
                     (route) => false,
                   );
                 },
-                child: const Text("Continue"),
+                child: Text('permissions.continue'.tr()),
               ),
             ],
           ),
