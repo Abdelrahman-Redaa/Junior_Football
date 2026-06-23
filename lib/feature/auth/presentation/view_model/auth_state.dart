@@ -63,6 +63,8 @@ class NavigateToHome extends AuthEvent {}
 
 class NavigateToLogin extends AuthEvent {}
 
+class NavigateToPermission extends AuthEvent {}
+
 class NavigateToSignup extends AuthEvent {}
 
 class NavigateToForgetPassword extends AuthEvent {}

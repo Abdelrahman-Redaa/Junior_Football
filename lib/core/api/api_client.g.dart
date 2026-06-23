@@ -507,9 +507,11 @@ class _ApiClient implements ApiClient {
   Future<CreatedResponse> createPost({
     required File file,
     required String content,
+    void Function(int, int)? onProgress,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
     _data.files.add(
@@ -534,6 +536,7 @@ class _ApiClient implements ApiClient {
             '/api/Post',
             queryParameters: queryParameters,
             data: _data,
+            onSendProgress: onProgress,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
@@ -703,6 +706,66 @@ class _ApiClient implements ApiClient {
   }
 
   @override
+  Future<dynamic> updateProfile({
+    String? bio,
+    double? height,
+    double? weight,
+    String? preferredFoot,
+    String? team,
+    File? profileImage,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    if (bio != null) {
+      _data.fields.add(MapEntry('Bio', bio));
+    }
+    if (height != null) {
+      _data.fields.add(MapEntry('Height', height.toString()));
+    }
+    if (weight != null) {
+      _data.fields.add(MapEntry('Weight', weight.toString()));
+    }
+    if (preferredFoot != null) {
+      _data.fields.add(MapEntry('PreferredFoot', preferredFoot));
+    }
+    if (team != null) {
+      _data.fields.add(MapEntry('Team', team));
+    }
+    if (profileImage != null) {
+      _data.files.add(
+        MapEntry(
+          'ProfileImage',
+          MultipartFile.fromFileSync(
+            profileImage.path,
+            filename: profileImage.path.split(Platform.pathSeparator).last,
+          ),
+        ),
+      );
+    }
+    final _options = _setStreamType<dynamic>(
+      Options(
+            method: 'PUT',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            '/api/UserProfile',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
+    return _value;
+  }
+
+  @override
   Future<CreatedResponse> followUser(String userId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -799,6 +862,28 @@ class _ApiClient implements ApiClient {
       errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
     }
+    return _value;
+  }
+
+  @override
+  Future<dynamic> changePassword({required Map<String, dynamic> body}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body);
+    final _options = _setStreamType<dynamic>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/UserProfile/change-password',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch(_options);
+    final _value = _result.data;
     return _value;
   }
 

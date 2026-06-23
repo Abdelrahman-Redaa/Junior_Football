@@ -99,6 +99,7 @@ abstract class ApiClient {
   Future<CreatedResponse> createPost({
     @Part(name: "file") required File file,
     @Part(name: "content") required String content,
+    @SendProgress() void Function(int sent, int total)? onProgress,
   });
 
   @GET(EndPoint.trainingDashboard)
@@ -119,6 +120,17 @@ abstract class ApiClient {
   @GET(EndPoint.userProfileById)
   Future<UserProfileDto> getUserProfileById(@Path("userId") String userId);
 
+  @PUT(EndPoint.userProfile)
+  @MultiPart()
+  Future<dynamic> updateProfile({
+    @Part(name: 'Bio') String? bio,
+    @Part(name: 'Height') double? height,
+    @Part(name: 'Weight') double? weight,
+    @Part(name: 'PreferredFoot') String? preferredFoot,
+    @Part(name: 'Team') String? team,
+    @Part(name: 'ProfileImage') File? profileImage,
+  });
+
   @POST(EndPoint.followUser)
   Future<CreatedResponse> followUser(@Path("userId") String userId);
 
@@ -130,5 +142,10 @@ abstract class ApiClient {
   Future<UploadVideoResponse> uploadProfileVideo({
     @Part(name: 'file') required File file,
     @SendProgress() void Function(int sent, int total)? onProgress,
+  });
+
+  @POST(EndPoint.changePassword)
+  Future<dynamic> changePassword({
+    @Body() required Map<String, dynamic> body,
   });
 }

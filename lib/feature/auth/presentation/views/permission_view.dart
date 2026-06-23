@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:junior_football/core/routes/routes_name.dart';
 import 'package:junior_football/core/utilities/spaces.dart';
 import 'package:junior_football/core/utilities/theme_extension.dart';
 import 'package:junior_football/feature/auth/presentation/widgets/permission_section.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class PermissionView extends StatelessWidget {
   const PermissionView({super.key});
@@ -38,17 +40,26 @@ class PermissionView extends StatelessWidget {
                 title: "Camera",
                 subTitle:
                     'Record your training sessions for AI-powered performance video recording',
+                permission: Permission.camera,
               ),
               VerticalSpace(22),
               PermissionSection(
-                Icons.notifications,
-
-                title: "Notifications",
+                Icons.folder,
+                title: "Storage",
                 subTitle:
-                    'Get personalized drills, game reminders, and important updates.',
+                    'Save and access your recorded training videos and AI reports.',
+                permission: Permission.storage,
               ),
               VerticalSpace(69),
-              ElevatedButton(onPressed: () {}, child: Text("Continue")),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    AppRoutes.bottomNavigationView,
+                    (route) => false,
+                  );
+                },
+                child: const Text("Continue"),
+              ),
             ],
           ),
         ),

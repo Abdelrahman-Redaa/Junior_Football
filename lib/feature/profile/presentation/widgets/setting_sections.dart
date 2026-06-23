@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:junior_football/core/routes/routes_name.dart';
 import 'package:junior_football/core/utilities/theme_extension.dart';
 import 'package:junior_football/feature/profile/presentation/widgets/card_content.dart';
+import 'package:junior_football/feature/profile/presentation/view_model/profile_view_model.dart';
+import 'package:junior_football/feature/profile/presentation/views/change_password_view.dart';
+import 'package:junior_football/feature/profile/presentation/views/support_view.dart';
 
 class SettingSections extends StatelessWidget {
   const SettingSections({super.key, required this.onLogout});
@@ -9,17 +14,59 @@ class SettingSections extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = _ProfileModel.profile;
-
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ...List.generate(
-          items.length,
-          (index) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: _SettingsTile(item: items[index]),
-          ),
+        _SettingsTile(
+          title: 'Change Password',
+          desc: 'Update your account password',
+          icon: Icons.lock_outline,
+          onTap: () {
+            final vm = context.read<ProfileViewModel>();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => BlocProvider.value(
+                  value: vm,
+                  child: const ChangePasswordView(),
+                ),
+              ),
+            );
+          },
         ),
+        const SizedBox(height: 12),
+        _SettingsTile(
+          title: 'Support',
+          desc: 'Help center and contact us',
+          icon: Icons.support_agent_outlined,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SupportView()),
+            );
+          },
+        ),
+        const SizedBox(height: 12),
+        _SettingsToggleTile(
+          title: 'Dark Mode',
+          desc: 'Toggle dark mode appearance',
+          icon: Icons.dark_mode_outlined,
+          value: false, // Wire up later
+          onChanged: (value) {
+            // Wire up later
+          },
+        ),
+        const SizedBox(height: 12),
+        _SettingsToggleTile(
+          title: 'Arabic Language',
+          desc: 'Switch application language',
+          icon: Icons.language_outlined,
+          value: false, // Wire up later
+          onChanged: (value) {
+            // Wire up later
+          },
+        ),
+        const SizedBox(height: 12),
         _LogoutTile(onLogout: onLogout),
       ],
     );
@@ -27,9 +74,75 @@ class SettingSections extends StatelessWidget {
 }
 
 class _SettingsTile extends StatelessWidget {
-  const _SettingsTile({required this.item});
+  const _SettingsTile({
+    required this.title,
+    required this.desc,
+    required this.icon,
+    required this.onTap,
+  });
 
-  final _ProfileModel item;
+  final String title;
+  final String desc;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+
+    return CardContent(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: theme.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: theme.primary),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: theme.semiBold16),
+                  const SizedBox(height: 4),
+                  Text(
+                    desc,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.medium14.copyWith(color: theme.subTitle),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: theme.subTitle),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SettingsToggleTile extends StatelessWidget {
+  const _SettingsToggleTile({
+    required this.title,
+    required this.desc,
+    required this.icon,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String title;
+  final String desc;
+  final IconData icon;
+  final bool value;
+  final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -45,17 +158,17 @@ class _SettingsTile extends StatelessWidget {
               color: theme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(item.icon, color: theme.primary),
+            child: Icon(icon, color: theme.primary),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.title, style: theme.semiBold16),
+                Text(title, style: theme.semiBold16),
                 const SizedBox(height: 4),
                 Text(
-                  item.desc,
+                  desc,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.medium14.copyWith(color: theme.subTitle),
@@ -63,7 +176,11 @@ class _SettingsTile extends StatelessWidget {
               ],
             ),
           ),
-          Icon(Icons.chevron_right, color: theme.subTitle),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: theme.primary,
+          ),
         ],
       ),
     );
@@ -116,39 +233,4 @@ class _LogoutTile extends StatelessWidget {
       ),
     );
   }
-}
-
-class _ProfileModel {
-  final String title;
-  final String desc;
-  final IconData icon;
-
-  const _ProfileModel({
-    required this.title,
-    required this.desc,
-    required this.icon,
-  });
-
-  static const List<_ProfileModel> profile = [
-    _ProfileModel(
-      title: 'Account',
-      desc: 'Security, phone number, and profile data',
-      icon: Icons.person_outline_rounded,
-    ),
-    _ProfileModel(
-      title: 'Privacy',
-      desc: 'Blocked contacts and visibility controls',
-      icon: Icons.lock_outline,
-    ),
-    _ProfileModel(
-      title: 'About',
-      desc: 'App info and version',
-      icon: Icons.error_outline,
-    ),
-    _ProfileModel(
-      title: 'Support',
-      desc: 'Help center, contact us, and privacy policy',
-      icon: Icons.help_outline,
-    ),
-  ];
 }

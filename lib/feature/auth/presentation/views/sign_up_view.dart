@@ -64,6 +64,11 @@ class _SignUpViewState extends State<SignUpView> {
           context,
         ).pushNamedAndRemoveUntil(AppRoutes.loginView, (route) => false);
       }
+      if (event is NavigateToPermission && mounted) {
+        Navigator.of(
+          context,
+        ).pushNamed(AppRoutes.permissionView);
+      }
       if (event is ShowToast && mounted) {
         ShowToastMessage.show(
           context: context,

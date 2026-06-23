@@ -12,6 +12,8 @@ class ProfileRepoImpl implements ProfileRepo {
   final ProfileDataSource _profileDataSource;
   ProfileRepoImpl(this._profileDataSource);
 
+  final List<String> _uploadedVideoUrls = [];
+
   @override
   Future<Result<UserProfileEntity>> getUserProfile() async {
     final result = await _profileDataSource.getUserProfile();
@@ -46,6 +48,32 @@ class ProfileRepoImpl implements ProfileRepo {
   }
 
   @override
+  Future<Result<UserProfileEntity>> updateProfile({
+    String? bio,
+    double? height,
+    double? weight,
+    String? preferredFoot,
+    String? team,
+    File? profileImage,
+  }) async {
+    final result = await _profileDataSource.updateProfile(
+      bio: bio,
+      height: height,
+      weight: weight,
+      preferredFoot: preferredFoot,
+      team: team,
+      profileImage: profileImage,
+    );
+
+    switch (result) {
+      case Success<dynamic>():
+        return getUserProfile();
+      case Failure<dynamic>():
+        return Failure(result.errorMessage);
+    }
+  }
+
+  @override
   Future<Result<String>> uploadProfileVideo(
     File file,
     void Function(int sent, int total)? onProgress,
@@ -56,6 +84,22 @@ class ProfileRepoImpl implements ProfileRepo {
       _profileDataSource.followUser(userId);
 
   @override
-  Future<Result<void>> unfollowUser(String userId) =>
-      _profileDataSource.unfollowUser(userId);
+  Future<Result<void>> unfollowUser(String userId) async {
+    return await _profileDataSource.unfollowUser(userId);
+  }
+
+  @override
+  Future<Result<void>> changePassword(String currentPassword, String newPassword) async {
+    return await _profileDataSource.changePassword(currentPassword, newPassword);
+  }
+
+  @override
+  void addUploadedVideoUrl(String url) {
+    if (!_uploadedVideoUrls.contains(url)) {
+      _uploadedVideoUrls.insert(0, url);
+    }
+  }
+
+  @override
+  List<String> getUploadedVideoUrls() => List.unmodifiable(_uploadedVideoUrls);
 }

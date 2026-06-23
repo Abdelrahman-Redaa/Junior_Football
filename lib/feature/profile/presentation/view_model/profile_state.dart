@@ -10,6 +10,8 @@ class ProfileState extends Equatable {
   final BaseState<bool> followAction;
   final double uploadVideoProgress;
   final List<String> uploadedVideoUrls;
+  final BaseState<bool> updateProfileState;
+  final BaseState<bool> changePasswordState;
 
   const ProfileState({
     required this.profile,
@@ -18,6 +20,8 @@ class ProfileState extends Equatable {
     required this.followAction,
     required this.uploadVideoProgress,
     required this.uploadedVideoUrls,
+    required this.updateProfileState,
+    required this.changePasswordState,
   });
 
   ProfileState copyWith({
@@ -27,6 +31,8 @@ class ProfileState extends Equatable {
     BaseState<bool>? followAction,
     double? uploadVideoProgress,
     List<String>? uploadedVideoUrls,
+    BaseState<bool>? updateProfileState,
+    BaseState<bool>? changePasswordState,
   }) {
     return ProfileState(
       profile: profile ?? this.profile,
@@ -35,6 +41,8 @@ class ProfileState extends Equatable {
       followAction: followAction ?? this.followAction,
       uploadVideoProgress: uploadVideoProgress ?? this.uploadVideoProgress,
       uploadedVideoUrls: uploadedVideoUrls ?? this.uploadedVideoUrls,
+      updateProfileState: updateProfileState ?? this.updateProfileState,
+      changePasswordState: changePasswordState ?? this.changePasswordState,
     );
   }
 
@@ -46,6 +54,8 @@ class ProfileState extends Equatable {
     followAction,
     uploadVideoProgress,
     uploadedVideoUrls,
+    updateProfileState,
+    changePasswordState,
   ];
 }
 
@@ -78,4 +88,16 @@ class FollowUserIntent extends ProfileIntent {
 class UnfollowUserIntent extends ProfileIntent {
   final String userId;
   UnfollowUserIntent({required this.userId});
+}
+
+class UpdateProfileIntent extends ProfileIntent {
+  final UserProfileEntity updatedProfile;
+  final File? profileImageFile;
+  UpdateProfileIntent({required this.updatedProfile, this.profileImageFile});
+}
+
+class ChangePasswordIntent extends ProfileIntent {
+  final String currentPassword;
+  final String newPassword;
+  ChangePasswordIntent({required this.currentPassword, required this.newPassword});
 }

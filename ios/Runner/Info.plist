@@ -51,5 +51,7 @@
         <string>Need camera access</string>
         <key>NSMicrophoneUsageDescription</key>
         <string>Need microphone access</string>
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>Need photo library access to save and access your training videos</string>
 	</dict>
 </plist>

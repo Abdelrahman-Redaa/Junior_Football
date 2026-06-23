@@ -23,6 +23,7 @@ final class EndPoint {
   static const String fullWeeklyPlan = "/api/WeeklyPlan/full-plan";
   static const String createPost = "/api/Post";
   static const String userProfile = "/api/UserProfile";
+  static const String changePassword = "/api/UserProfile/change-password";
   static const String userProfileById = "/api/userprofile/{userId}";
   static const String uploadProfilePicture = "/api/UserProfile/upload-picture";
   static const String followUser = "/api/userprofile/{userId}/follow";

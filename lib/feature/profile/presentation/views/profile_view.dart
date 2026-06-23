@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:junior_football/core/utilities/show_toast_message.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:junior_football/core/constants/app_assets.dart';
@@ -14,6 +16,7 @@ import 'package:junior_football/feature/ai/presentation/widget/video_player.dart
 import 'package:junior_football/feature/profile/domain/entities/user_profile_entity.dart';
 import 'package:junior_football/feature/profile/presentation/view_model/profile_state.dart';
 import 'package:junior_football/feature/profile/presentation/view_model/profile_view_model.dart';
+import 'package:junior_football/feature/profile/presentation/views/edit_profile.dart';
 import 'package:junior_football/feature/profile/presentation/widgets/setting_sections.dart';
 
 class ProfileView extends StatelessWidget {
@@ -37,12 +40,42 @@ class _ProfileBody extends StatelessWidget {
     final theme = context.appTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(
+        title: const Text('Profile'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () {
+              final vm = context.read<ProfileViewModel>();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (innerContext) => BlocProvider.value(
+                    value: vm,
+                    child: Scaffold(
+                      appBar: AppBar(title: const Text('Settings')),
+                      body: SafeArea(
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.all(16.w),
+                          child: SettingSections(
+                            onLogout: () => _confirmLogout(innerContext),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: BlocConsumer<ProfileViewModel, ProfileState>(
           listenWhen: (previous, current) =>
               previous.followAction != current.followAction ||
-              previous.uploadVideo != current.uploadVideo,
+              previous.uploadVideo != current.uploadVideo ||
+              previous.updateProfileState != current.updateProfileState,
           listener: (context, state) {
             if (state.followAction.isError) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -65,6 +98,20 @@ class _ProfileBody extends StatelessWidget {
             if (state.uploadVideo.isLoaded) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Video uploaded successfully')),
+              );
+            }
+            if (state.updateProfileState.isLoaded) {
+              ShowToastMessage.show(
+                context: context,
+                message: "Profile Updated Successfully",
+                isError: false,
+              );
+            }
+            if (state.updateProfileState.isError) {
+              ShowToastMessage.show(
+                context: context,
+                message: state.updateProfileState.errorMessage ?? "Failed to update profile",
+                isError: true,
               );
             }
           },
@@ -104,16 +151,6 @@ class _ProfileBody extends StatelessWidget {
                       uploadedVideoUrls: state.uploadedVideoUrls,
                       isUploading: state.uploadVideo.isLoading,
                       progress: state.uploadVideoProgress,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text('Settings', style: theme.semiBold24),
-                    SizedBox(height: 10.h),
-                    SettingSections(onLogout: () => _confirmLogout(context)),
-                    SizedBox(height: 12.h),
-                    CustomMenu(
-                      hintText: 'Languages',
-                      onChange: (v) {},
-                      items: const ['Arb', 'Eng'],
                     ),
                   ],
                 ),
@@ -398,49 +435,27 @@ class _ProfileHeader extends StatelessWidget {
                     style: theme.regular14.copyWith(color: theme.subTitle),
                   ),
                 ],
-                SizedBox(height: 12.h),
                 Row(
                   children: [
                     Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: profile.userId == null || isFollowLoading
-                            ? null
-                            : () {
-                                final intent = isFollowing
-                                    ? UnfollowUserIntent(
-                                        userId: profile.userId!,
-                                      )
-                                    : FollowUserIntent(userId: profile.userId!);
-                                context.read<ProfileViewModel>().doIntent(
-                                  intent,
-                                );
-                              },
-                        icon: isFollowLoading
-                            ? SizedBox(
-                                width: 16.r,
-                                height: 16.r,
-                                child: const CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Icon(
-                                isFollowing
-                                    ? Icons.person_remove_alt_1_outlined
-                                    : Icons.person_add_alt_1_outlined,
-                              ),
-                        label: Text(isFollowing ? 'Unfollow' : 'Follow'),
-                      ),
-                    ),
-                    SizedBox(width: 10.w),
-                    Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: () => Navigator.pushNamed(
-                          context,
-                          AppRoutes.editProfileView,
-                        ),
+                        onPressed: () async {
+                          final vm = context.read<ProfileViewModel>();
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BlocProvider.value(
+                                value: vm,
+                                child: EditProfileView(initialProfile: profile),
+                              ),
+                              settings: const RouteSettings(
+                                name: AppRoutes.editProfileView,
+                              ),
+                            ),
+                          );
+                        },
                         icon: const Icon(Icons.edit_outlined),
-                        label: const Text('Edit'),
+                        label: const Text('Edit Profile'),
                       ),
                     ),
                   ],
@@ -559,6 +574,11 @@ class _DetailsSection extends StatelessWidget {
             value: profile.userId ?? '-',
           ),
           _InfoRow(
+            icon: Icons.phone_outlined,
+            title: 'Phone Number',
+            value: profile.phoneNumber ?? '-',
+          ),
+          _InfoRow(
             icon: Icons.cake_outlined,
             title: 'Age',
             value: _ageText(profile.dateOfBirth),
@@ -660,17 +680,35 @@ class _IdBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.appTheme;
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-      decoration: BoxDecoration(
-        color: theme.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        'ID: $userId',
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: theme.medium14.copyWith(color: theme.primary),
+    return InkWell(
+      borderRadius: BorderRadius.circular(999),
+      onTap: () {
+        Clipboard.setData(ClipboardData(text: userId));
+        ShowToastMessage.show(
+          context: context,
+          message: "ID copied to clipboard",
+          isError: false,
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+        decoration: BoxDecoration(
+          color: theme.primary.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'ID: $userId',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.medium14.copyWith(color: theme.primary),
+            ),
+            SizedBox(width: 4.w),
+            Icon(Icons.copy, size: 14.r, color: theme.primary),
+          ],
+        ),
       ),
     );
   }

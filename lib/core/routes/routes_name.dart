@@ -10,6 +10,8 @@ class AppRoutes {
   static const injuryProtectionView = "injuryProtectionView";
   static const profileView = "profileView";
   static const editProfileView = "editProfileView";
+  static const changePasswordView = "changePasswordView";
+  static const supportView = "supportView";
   static const sessionView = "sessionView";
   static const trainingHubView = "trainingHubView";
   static const sessionLevelView = "sessionLevelView";

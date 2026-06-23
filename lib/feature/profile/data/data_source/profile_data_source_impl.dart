@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:junior_football/core/api/api_client.dart';
 import 'package:junior_football/core/error_handling/execute_api.dart';
 import 'package:junior_football/core/error_handling/result.dart';
+import 'package:junior_football/feature/community/data/models/created_response.dart';
 import 'package:junior_football/feature/home/data/models/response/upload_video_response.dart';
 import '../models/response_models/user_profile_dto.dart';
 import 'profile_data_source.dart';
@@ -24,6 +25,27 @@ class ProfileDataSourceImpl implements ProfileDataSource {
   @override
   Future<Result<UserProfileDto>> uploadProfilePicture(File file) =>
       executeApi(() => _apiClient.uploadProfilePicture(file: file));
+
+  @override
+  Future<Result<dynamic>> updateProfile({
+    String? bio,
+    double? height,
+    double? weight,
+    String? preferredFoot,
+    String? team,
+    File? profileImage,
+  }) async {
+    return executeApi(
+      () => _apiClient.updateProfile(
+        bio: bio,
+        height: height,
+        weight: weight,
+        preferredFoot: preferredFoot,
+        team: team,
+        profileImage: profileImage,
+      ),
+    );
+  }
 
   @override
   Future<Result<String>> uploadProfileVideo(
@@ -54,5 +76,15 @@ class ProfileDataSourceImpl implements ProfileDataSource {
   @override
   Future<Result<void>> unfollowUser(String userId) => executeApi(() async {
     await _apiClient.unfollowUser(userId);
+  });
+
+  @override
+  Future<Result<void>> changePassword(String currentPassword, String newPassword) => executeApi(() async {
+    await _apiClient.changePassword(
+      body: {
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      },
+    );
   });
 }

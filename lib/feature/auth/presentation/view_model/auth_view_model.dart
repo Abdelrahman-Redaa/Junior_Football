@@ -168,7 +168,7 @@ class AuthViewModel extends BaseCubit<AuthState, AuthIntent, AuthEvent> {
     switch (response) {
       case Success<RegisterEntity>():
         emit(state.copyWith(signupState: BaseState.loaded(response.data)));
-        emitEvent(NavigateToLogin());
+        emitEvent(NavigateToPermission());
       case Failure<RegisterEntity>():
         emit(
           state.copyWith(signupState: BaseState.error(response.errorMessage)),
