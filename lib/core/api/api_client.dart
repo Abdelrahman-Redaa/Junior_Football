@@ -144,6 +144,13 @@ abstract class ApiClient {
     @SendProgress() void Function(int sent, int total)? onProgress,
   });
 
+  @POST(EndPoint.uploadProfileVideoEndpoint)
+  @MultiPart()
+  Future<UploadVideoResponse> uploadProfileVideoToProfile({
+    @Part(name: 'file') required File file,
+    @SendProgress() void Function(int sent, int total)? onProgress,
+  });
+
   @POST(EndPoint.changePassword)
   Future<dynamic> changePassword({
     @Body() required Map<String, dynamic> body,

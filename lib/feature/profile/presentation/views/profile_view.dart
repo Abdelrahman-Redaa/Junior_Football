@@ -111,7 +111,9 @@ class _ProfileBody extends StatelessWidget {
             if (state.updateProfileState.isError) {
               ShowToastMessage.show(
                 context: context,
-                message: state.updateProfileState.errorMessage ?? "Failed to update profile",
+                message:
+                    state.updateProfileState.errorMessage ??
+                    "Failed to update profile",
                 isError: true,
               );
             }
@@ -149,7 +151,6 @@ class _ProfileBody extends StatelessWidget {
                     SizedBox(height: 16.h),
                     _VideoGallerySection(
                       profile: profile,
-                      uploadedVideoUrls: state.uploadedVideoUrls,
                       isUploading: state.uploadVideo.isLoading,
                       progress: state.uploadVideoProgress,
                     ),
@@ -195,13 +196,11 @@ class _ProfileBody extends StatelessWidget {
 class _VideoGallerySection extends StatelessWidget {
   const _VideoGallerySection({
     required this.profile,
-    required this.uploadedVideoUrls,
     required this.isUploading,
     required this.progress,
   });
 
   final UserProfileEntity profile;
-  final List<String> uploadedVideoUrls;
   final bool isUploading;
   final double progress;
 
@@ -209,7 +208,7 @@ class _VideoGallerySection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.appTheme;
     final videos = {
-      ...uploadedVideoUrls,
+      ...(profile.videosUrl ?? []),
       ..._videoUrlsFromPosts(profile.posts),
     }.toList();
 
@@ -225,7 +224,12 @@ class _VideoGallerySection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(child: Text('profile.videoGallery'.tr(), style: theme.semiBold24)),
+              Expanded(
+                child: Text(
+                  'profile.videoGallery'.tr(),
+                  style: theme.semiBold24,
+                ),
+              ),
               TextButton.icon(
                 onPressed: isUploading
                     ? null

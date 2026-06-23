@@ -111,7 +111,11 @@
     "cancel": "إلغاء",
     "delete": "حذف",
     "postView": "عرض المنشور",
-    "unfollow": "إلغاء المتابعة"
+    "unfollow": "إلغاء المتابعة",
+    "postCreated": "تم نشر المنشور بنجاح!",
+    "followByID": "متابعة لاعب",
+    "enterPlayerID": "أدخل معرّف اللاعب",
+    "follow": "متابعة"
   },
   "profile": {
     "title": "الملف الشخصي",

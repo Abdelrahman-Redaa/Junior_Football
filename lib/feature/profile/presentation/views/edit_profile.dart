@@ -50,10 +50,11 @@ class _EditProfileViewState extends State<EditProfileView> {
       _heightController.text = profile.height?.toString() ?? '';
       _weightController.text = profile.weight?.toString() ?? '';
       _teamController.text = profile.team ?? '';
-      
+
       final rawFoot = profile.preferredFoot;
       if (rawFoot != null && rawFoot.isNotEmpty) {
-        final formattedFoot = rawFoot[0].toUpperCase() + rawFoot.substring(1).toLowerCase();
+        final formattedFoot =
+            rawFoot[0].toUpperCase() + rawFoot.substring(1).toLowerCase();
         if (['Right', 'Left', 'Both'].contains(formattedFoot)) {
           _preferredFoot = formattedFoot;
         } else {
@@ -78,9 +79,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('editProfile.title'.tr()),
-      ),
+      appBar: AppBar(title: Text('editProfile.title'.tr())),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: SingleChildScrollView(
@@ -115,7 +114,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                         CustomTextFormField(
                           controller: _heightController,
                           hintText: "E.g. 180",
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
                         ),
                       ],
                     ),
@@ -129,7 +130,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                         CustomTextFormField(
                           controller: _weightController,
                           hintText: "E.g. 75",
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
                         ),
                       ],
                     ),
@@ -174,7 +177,9 @@ class _EditProfileViewState extends State<EditProfileView> {
                     if (state.updateProfileState.isError) {
                       ShowToastMessage.show(
                         context: context,
-                        message: state.updateProfileState.errorMessage ?? 'Update failed',
+                        message:
+                            state.updateProfileState.errorMessage ??
+                            'Update failed',
                         isError: true,
                       );
                     }
@@ -190,19 +195,23 @@ class _EditProfileViewState extends State<EditProfileView> {
                                   bio: _bioController.text.isEmpty
                                       ? null
                                       : _bioController.text,
-                                  height: double.tryParse(_heightController.text),
-                                  weight: double.tryParse(_weightController.text),
+                                  height: double.tryParse(
+                                    _heightController.text,
+                                  ),
+                                  weight: double.tryParse(
+                                    _weightController.text,
+                                  ),
                                   preferredFoot: _preferredFoot,
                                   team: _teamController.text.isEmpty
                                       ? null
                                       : _teamController.text,
                                 );
                                 context.read<ProfileViewModel>().doIntent(
-                                      UpdateProfileIntent(
-                                        updatedProfile: updatedProfile,
-                                        profileImageFile: _selectedImage,
-                                      ),
-                                    );
+                                  UpdateProfileIntent(
+                                    updatedProfile: updatedProfile,
+                                    profileImageFile: _selectedImage,
+                                  ),
+                                );
                               }
                             },
                       child: isLoading
@@ -247,7 +256,10 @@ class _EditProfileViewState extends State<EditProfileView> {
       imageWidget = Image.file(_selectedImage!, fit: BoxFit.cover);
     } else if (_profile?.profileImageUrl != null &&
         _profile!.profileImageUrl!.isNotEmpty) {
-      imageWidget = Image.network(_profile!.profileImageUrl!, fit: BoxFit.cover);
+      imageWidget = Image.network(
+        _profile!.profileImageUrl!,
+        fit: BoxFit.cover,
+      );
     } else {
       imageWidget = Image.asset(AppAssets.profile, fit: BoxFit.cover);
     }

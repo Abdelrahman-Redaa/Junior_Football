@@ -111,7 +111,11 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "postView": "Post View",
-    "unfollow": "Unfollow"
+    "unfollow": "Unfollow",
+    "postCreated": "Post published successfully!",
+    "followByID": "Follow Player",
+    "enterPlayerID": "Enter Player ID",
+    "follow": "Follow"
   },
   "profile": {
     "title": "Profile",

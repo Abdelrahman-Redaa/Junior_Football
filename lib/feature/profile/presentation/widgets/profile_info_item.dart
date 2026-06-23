@@ -20,9 +20,7 @@ class ProfileInfoItem extends StatelessWidget {
       children: [
         Container(
           padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-          ),
+          decoration: const BoxDecoration(color: Colors.white),
           child: Row(
             children: [
               Container(
@@ -31,19 +29,13 @@ class ProfileInfoItem extends StatelessWidget {
                   color: Colors.green.shade50,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  icon,
-                  color: Colors.green.shade700,
-                  size: 20,
-                ),
+                child: Icon(icon, color: Colors.green.shade700, size: 20),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
               Text(
@@ -53,10 +45,7 @@ class ProfileInfoItem extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              if (trailing != null) ...[
-                const SizedBox(width: 12),
-                trailing!,
-              ],
+              if (trailing != null) ...[const SizedBox(width: 12), trailing!],
             ],
           ),
         ),

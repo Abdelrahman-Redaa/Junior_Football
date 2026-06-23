@@ -36,11 +36,7 @@ class PlayerStatCard extends StatelessWidget {
               color: Colors.white24,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 20,
-            ),
+            child: Icon(icon, color: Colors.white, size: 20),
           ),
           const SizedBox(height: 16),
           Text(

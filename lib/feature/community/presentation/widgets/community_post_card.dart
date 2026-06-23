@@ -42,6 +42,7 @@ class CommunityPostCard extends StatelessWidget {
     var theme = context.appTheme;
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(

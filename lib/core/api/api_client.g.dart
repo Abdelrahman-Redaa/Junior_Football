@@ -866,6 +866,52 @@ class _ApiClient implements ApiClient {
   }
 
   @override
+  Future<UploadVideoResponse> uploadProfileVideoToProfile({
+    required File file,
+    void Function(int, int)? onProgress,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.files.add(
+      MapEntry(
+        'file',
+        MultipartFile.fromFileSync(
+          file.path,
+          filename: file.path.split(Platform.pathSeparator).last,
+        ),
+      ),
+    );
+    final _options = _setStreamType<UploadVideoResponse>(
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'multipart/form-data',
+          )
+          .compose(
+            _dio.options,
+            '/api/UserProfile/upload-video',
+            queryParameters: queryParameters,
+            data: _data,
+            onSendProgress: onProgress,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late UploadVideoResponse _value;
+    try {
+      _value = UploadVideoResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<dynamic> changePassword({required Map<String, dynamic> body}) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

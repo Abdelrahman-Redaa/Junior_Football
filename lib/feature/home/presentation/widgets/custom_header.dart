@@ -33,7 +33,7 @@ class HeaderCustom extends StatelessWidget {
         Spacer(),
         GestureDetector(
           onTap: () =>
-              Navigator.of(context).pushNamed(AppRoutes.playerProfileView),
+              Navigator.of(context).pushNamed(AppRoutes.profileView),
           child: BlocBuilder<HomeViewModel, HomeState>(
             builder: (context, state) {
               if (state.trainingDashboard.isLoaded) {

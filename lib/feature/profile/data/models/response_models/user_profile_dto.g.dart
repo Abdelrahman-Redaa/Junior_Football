@@ -6,6 +6,20 @@ part of 'user_profile_dto.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+ProfileVideoDto _$ProfileVideoDtoFromJson(Map<String, dynamic> json) =>
+    ProfileVideoDto(
+      id: json['id'] as String?,
+      userId: json['userId'] as String?,
+      videoUrl: json['videoUrl'] as String?,
+    );
+
+Map<String, dynamic> _$ProfileVideoDtoToJson(ProfileVideoDto instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'userId': instance.userId,
+      'videoUrl': instance.videoUrl,
+    };
+
 UserProfileDto _$UserProfileDtoFromJson(Map<String, dynamic> json) =>
     UserProfileDto(
       userId: json['userId'] as String?,
@@ -32,6 +46,9 @@ UserProfileDto _$UserProfileDtoFromJson(Map<String, dynamic> json) =>
       achievements: json['achievements'] as List<dynamic>?,
       posts: json['posts'] as List<dynamic>?,
       isFollowing: json['isFollowing'] as bool?,
+      videos: (json['videos'] as List<dynamic>?)
+          ?.map((e) => ProfileVideoDto.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$UserProfileDtoToJson(UserProfileDto instance) =>
@@ -58,4 +75,5 @@ Map<String, dynamic> _$UserProfileDtoToJson(UserProfileDto instance) =>
       'achievements': instance.achievements,
       'posts': instance.posts,
       'isFollowing': instance.isFollowing,
+      'videos': instance.videos,
     };

@@ -20,7 +20,8 @@ abstract interface class ProfileRepo {
   );
   Future<Result<void>> followUser(String userId);
   Future<Result<void>> unfollowUser(String userId);
-  Future<Result<void>> changePassword(String currentPassword, String newPassword);
-  void addUploadedVideoUrl(String url);
-  List<String> getUploadedVideoUrls();
+  Future<Result<void>> changePassword(
+    String currentPassword,
+    String newPassword,
+  );
 }

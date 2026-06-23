@@ -29,4 +29,5 @@ final class EndPoint {
   static const String followUser = "/api/userprofile/{userId}/follow";
   static const String unfollowUser = "/api/userprofile/{userId}/unfollow";
   static const String uploadFileVideo = "/api/file/upload-video";
+  static const String uploadProfileVideoEndpoint = "/api/UserProfile/upload-video";
 }

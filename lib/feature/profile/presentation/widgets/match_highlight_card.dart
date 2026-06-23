@@ -38,10 +38,7 @@ class MatchHighlightCard extends StatelessWidget {
             children: [
               AspectRatio(
                 aspectRatio: 16 / 9,
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                ),
+                child: Image.network(imageUrl, fit: BoxFit.cover),
               ),
               Positioned(
                 left: 16,
@@ -112,10 +109,7 @@ class MatchHighlightCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   date,
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(color: Colors.black54, fontSize: 13),
                 ),
               ],
             ),

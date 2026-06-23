@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:junior_football/core/utilities/theme_extension.dart';
 

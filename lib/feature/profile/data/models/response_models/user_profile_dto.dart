@@ -3,6 +3,20 @@ import 'package:json_annotation/json_annotation.dart';
 part 'user_profile_dto.g.dart';
 
 @JsonSerializable()
+class ProfileVideoDto {
+  final String? id;
+  final String? userId;
+  final String? videoUrl;
+
+  ProfileVideoDto({this.id, this.userId, this.videoUrl});
+
+  factory ProfileVideoDto.fromJson(Map<String, dynamic> json) =>
+      _$ProfileVideoDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProfileVideoDtoToJson(this);
+}
+
+@JsonSerializable()
 class UserProfileDto {
   @JsonKey(name: "userId")
   final String? userId;
@@ -48,6 +62,8 @@ class UserProfileDto {
   final List<dynamic>? posts;
   @JsonKey(name: "isFollowing")
   final bool? isFollowing;
+  @JsonKey(name: "videos")
+  final List<ProfileVideoDto>? videos;
 
   UserProfileDto({
     this.userId,
@@ -72,6 +88,7 @@ class UserProfileDto {
     this.achievements,
     this.posts,
     this.isFollowing,
+    this.videos,
   });
 
   factory UserProfileDto.fromJson(Map<String, dynamic> json) =>

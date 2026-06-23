@@ -18,17 +18,10 @@ class ProfileViewModel
           uploadVideo: BaseState.init(),
           followAction: BaseState.init(),
           uploadVideoProgress: 0,
-          uploadedVideoUrls: const [],
           updateProfileState: BaseState.init(),
           changePasswordState: BaseState.init(),
         ),
-      ) {
-    // Load persisted video URLs from the Singleton repo
-    final persistedVideos = _profileRepo.getUploadedVideoUrls();
-    if (persistedVideos.isNotEmpty) {
-      emit(state.copyWith(uploadedVideoUrls: persistedVideos));
-    }
-  }
+      );
 
   final ProfileRepo _profileRepo;
 
@@ -68,7 +61,10 @@ class ProfileViewModel
     }
   }
 
-  Future<void> _updateProfile(UserProfileEntity edited, File? profileImageFile) async {
+  Future<void> _updateProfile(
+    UserProfileEntity edited,
+    File? profileImageFile,
+  ) async {
     emit(state.copyWith(updateProfileState: BaseState.loading()));
 
     final result = await _profileRepo.updateProfile(
@@ -82,14 +78,18 @@ class ProfileViewModel
 
     switch (result) {
       case Success<UserProfileEntity>():
-        emit(state.copyWith(
-          updateProfileState: BaseState.loaded(true),
-          profile: BaseState.loaded(result.data),
-        ));
+        emit(
+          state.copyWith(
+            updateProfileState: BaseState.loaded(true),
+            profile: BaseState.loaded(result.data),
+          ),
+        );
       case Failure<UserProfileEntity>():
-        emit(state.copyWith(
-          updateProfileState: BaseState.error(result.errorMessage),
-        ));
+        emit(
+          state.copyWith(
+            updateProfileState: BaseState.error(result.errorMessage),
+          ),
+        );
     }
   }
 
@@ -143,19 +143,36 @@ class ProfileViewModel
     );
     switch (result) {
       case Success<String>():
-        _profileRepo.addUploadedVideoUrl(result.data);
+        final currentProfile = state.profile.data;
+        if (currentProfile != null) {
+          final updatedVideos = <String>[
+            result.data,
+            ...(currentProfile.videosUrl ?? []),
+          ];
+          emit(
+            state.copyWith(
+              uploadVideo: BaseState.loaded(true),
+              uploadVideoProgress: 100,
+              profile: BaseState.loaded(
+                currentProfile.copyWith(videosUrl: updatedVideos),
+              ),
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              uploadVideo: BaseState.loaded(true),
+              uploadVideoProgress: 100,
+            ),
+          );
+        }
+      case Failure<String>():
         emit(
           state.copyWith(
-            uploadVideo: BaseState.loaded(result.data),
-            uploadVideoProgress: 100,
-            uploadedVideoUrls: [result.data, ...state.uploadedVideoUrls],
+            uploadVideo: BaseState.error(result.errorMessage),
+            uploadVideoProgress: 0,
           ),
         );
-      case Failure<String>():
-        emit(state.copyWith(
-          uploadVideo: BaseState.error(result.errorMessage),
-          uploadVideoProgress: 0,
-        ));
     }
   }
 
@@ -219,16 +236,26 @@ class ProfileViewModel
     }
   }
 
-  Future<void> _changePassword(String currentPassword, String newPassword) async {
+  Future<void> _changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
     emit(state.copyWith(changePasswordState: BaseState.loading()));
 
-    final result = await _profileRepo.changePassword(currentPassword, newPassword);
+    final result = await _profileRepo.changePassword(
+      currentPassword,
+      newPassword,
+    );
 
     switch (result) {
       case Success<void>():
         emit(state.copyWith(changePasswordState: BaseState.loaded(true)));
       case Failure<void>():
-        emit(state.copyWith(changePasswordState: BaseState.error(result.errorMessage)));
+        emit(
+          state.copyWith(
+            changePasswordState: BaseState.error(result.errorMessage),
+          ),
+        );
     }
   }
 }

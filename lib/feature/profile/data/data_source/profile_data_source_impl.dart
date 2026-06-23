@@ -53,7 +53,10 @@ class ProfileDataSourceImpl implements ProfileDataSource {
     void Function(int sent, int total)? onProgress,
   ) async {
     final result = await executeApi(
-      () => _apiClient.uploadProfileVideo(file: file, onProgress: onProgress),
+      () => _apiClient.uploadProfileVideoToProfile(
+        file: file,
+        onProgress: onProgress,
+      ),
     );
 
     switch (result) {
@@ -79,12 +82,12 @@ class ProfileDataSourceImpl implements ProfileDataSource {
   });
 
   @override
-  Future<Result<void>> changePassword(String currentPassword, String newPassword) => executeApi(() async {
+  Future<Result<void>> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) => executeApi(() async {
     await _apiClient.changePassword(
-      body: {
-        'currentPassword': currentPassword,
-        'newPassword': newPassword,
-      },
+      body: {'currentPassword': currentPassword, 'newPassword': newPassword},
     );
   });
 }

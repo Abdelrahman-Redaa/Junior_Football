@@ -20,5 +20,8 @@ abstract interface class ProfileDataSource {
   );
   Future<Result<void>> followUser(String userId);
   Future<Result<void>> unfollowUser(String userId);
-  Future<Result<void>> changePassword(String currentPassword, String newPassword);
+  Future<Result<void>> changePassword(
+    String currentPassword,
+    String newPassword,
+  );
 }

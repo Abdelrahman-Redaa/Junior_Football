@@ -6,10 +6,9 @@ import 'package:junior_football/feature/profile/domain/entities/user_profile_ent
 class ProfileState extends Equatable {
   final BaseState<UserProfileEntity> profile;
   final BaseState<bool> uploadPicture;
-  final BaseState<String> uploadVideo;
+  final BaseState<bool> uploadVideo;
   final BaseState<bool> followAction;
   final double uploadVideoProgress;
-  final List<String> uploadedVideoUrls;
   final BaseState<bool> updateProfileState;
   final BaseState<bool> changePasswordState;
 
@@ -19,7 +18,6 @@ class ProfileState extends Equatable {
     required this.uploadVideo,
     required this.followAction,
     required this.uploadVideoProgress,
-    required this.uploadedVideoUrls,
     required this.updateProfileState,
     required this.changePasswordState,
   });
@@ -27,10 +25,9 @@ class ProfileState extends Equatable {
   ProfileState copyWith({
     BaseState<UserProfileEntity>? profile,
     BaseState<bool>? uploadPicture,
-    BaseState<String>? uploadVideo,
+    BaseState<bool>? uploadVideo,
     BaseState<bool>? followAction,
     double? uploadVideoProgress,
-    List<String>? uploadedVideoUrls,
     BaseState<bool>? updateProfileState,
     BaseState<bool>? changePasswordState,
   }) {
@@ -40,7 +37,6 @@ class ProfileState extends Equatable {
       uploadVideo: uploadVideo ?? this.uploadVideo,
       followAction: followAction ?? this.followAction,
       uploadVideoProgress: uploadVideoProgress ?? this.uploadVideoProgress,
-      uploadedVideoUrls: uploadedVideoUrls ?? this.uploadedVideoUrls,
       updateProfileState: updateProfileState ?? this.updateProfileState,
       changePasswordState: changePasswordState ?? this.changePasswordState,
     );
@@ -53,7 +49,6 @@ class ProfileState extends Equatable {
     uploadVideo,
     followAction,
     uploadVideoProgress,
-    uploadedVideoUrls,
     updateProfileState,
     changePasswordState,
   ];
@@ -99,5 +94,8 @@ class UpdateProfileIntent extends ProfileIntent {
 class ChangePasswordIntent extends ProfileIntent {
   final String currentPassword;
   final String newPassword;
-  ChangePasswordIntent({required this.currentPassword, required this.newPassword});
+  ChangePasswordIntent({
+    required this.currentPassword,
+    required this.newPassword,
+  });
 }

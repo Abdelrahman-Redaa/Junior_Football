@@ -25,5 +25,6 @@ extension UserProfileMapper on UserProfileDto {
     achievements: achievements,
     posts: posts,
     isFollowing: isFollowing,
+    videosUrl: videos?.map((e) => e.videoUrl ?? '').where((url) => url.isNotEmpty).toList(),
   );
 }

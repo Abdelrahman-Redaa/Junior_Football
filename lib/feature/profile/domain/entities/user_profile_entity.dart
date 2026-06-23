@@ -21,6 +21,7 @@ class UserProfileEntity {
   final List<dynamic>? achievements;
   final List<dynamic>? posts;
   final bool? isFollowing;
+  final List<String>? videosUrl;
 
   const UserProfileEntity({
     this.userId,
@@ -45,6 +46,7 @@ class UserProfileEntity {
     this.achievements,
     this.posts,
     this.isFollowing,
+    this.videosUrl,
   });
 
   UserProfileEntity copyWith({
@@ -70,6 +72,7 @@ class UserProfileEntity {
     List<dynamic>? achievements,
     List<dynamic>? posts,
     bool? isFollowing,
+    List<String>? videosUrl,
   }) {
     return UserProfileEntity(
       userId: userId ?? this.userId,
@@ -94,6 +97,7 @@ class UserProfileEntity {
       achievements: achievements ?? this.achievements,
       posts: posts ?? this.posts,
       isFollowing: isFollowing ?? this.isFollowing,
+      videosUrl: videosUrl ?? this.videosUrl,
     );
   }
 }

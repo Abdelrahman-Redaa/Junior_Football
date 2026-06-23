@@ -233,7 +233,11 @@ class _PlayerProfileViewState extends State<PlayerProfileView> {
                                           ? Icons.person_remove_alt_1_outlined
                                           : Icons.person_add_alt_1_outlined,
                                     ),
-                              label: Text(isFollowing ? 'community.unfollow'.tr() : 'Follow'),
+                              label: Text(
+                                isFollowing
+                                    ? 'community.unfollow'.tr()
+                                    : 'Follow',
+                              ),
                             ),
                             SizedBox(height: 18.h),
                           ],
