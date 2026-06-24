@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:junior_football/core/base_bloc/my_bloc_observer.dart';
 import 'package:junior_football/core/constants/keys.dart';
 import 'package:junior_football/core/routes/routes_name.dart';
+import 'package:junior_football/core/theme/theme_cubit.dart';
 import 'package:junior_football/core/utilities/app_local_storage.dart';
 import 'package:junior_football/junior_football_app.dart';
 import 'package:media_kit/media_kit.dart';
@@ -16,15 +17,21 @@ void main() async {
   await configureDependencies();
   await EasyLocalization.ensureInitialized();
 
+  final themeCubit = ThemeCubit();
+  await themeCubit.loadTheme();
+
   Bloc.observer = MyBlocObserver();
 
   runApp(
-    EasyLocalization(
-      saveLocale: true,
-      supportedLocales: const [Locale('en'), Locale('ar')],
-      path: 'assets/translations',
-      fallbackLocale: const Locale('en'),
-      child: JuniorFootballApp(initRoute: initRoute),
+    BlocProvider(
+      create: (_) => themeCubit,
+      child: EasyLocalization(
+        saveLocale: true,
+        supportedLocales: const [Locale('en'), Locale('ar')],
+        path: 'assets/translations',
+        fallbackLocale: const Locale('en'),
+        child: JuniorFootballApp(initRoute: initRoute),
+      ),
     ),
   );
 }

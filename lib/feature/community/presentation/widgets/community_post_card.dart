@@ -210,10 +210,12 @@ class CommunityPostCard extends StatelessWidget {
     final postLink = postImage ?? content ?? '';
     showModalBottomSheet<void>(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
-      builder: (ctx) => SafeArea(
+      builder: (ctx) {
+        final sheetTheme = ctx.appTheme;
+        return SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
           child: Column(
@@ -223,15 +225,14 @@ class CommunityPostCard extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: sheetTheme.progressTrack,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(height: 16),
               Text(
                 'communityPost.share'.tr(),
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 16),
+                style: sheetTheme.semiBold16,
               ),
               const SizedBox(height: 12),
               ListTile(
@@ -268,7 +269,8 @@ class CommunityPostCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
+      );
+      },
     );
   }
 }

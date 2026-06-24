@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:junior_football/core/utilities/spaces.dart';
+import 'package:junior_football/core/utilities/theme_extension.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
@@ -33,6 +34,7 @@ class _VideoPlayerState extends State<VideoPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -41,7 +43,7 @@ class _VideoPlayerState extends State<VideoPlayerWidget> {
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            color: const Color(0xffADD6B6),
+            color: theme.accentSurface,
           ),
           clipBehavior: Clip.antiAlias,
           child: Stack(

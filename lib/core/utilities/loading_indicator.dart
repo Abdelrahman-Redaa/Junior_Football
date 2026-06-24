@@ -9,7 +9,7 @@ class LoadingIndicator extends StatelessWidget {
     final theme = context.appTheme;
     return CircularProgressIndicator(
       backgroundColor: theme.primary,
-      color: Colors.white,
+      color: theme.secondary,
       strokeWidth: 2,
       trackGap: 10,
     );

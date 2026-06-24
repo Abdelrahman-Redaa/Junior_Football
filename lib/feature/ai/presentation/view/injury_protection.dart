@@ -34,7 +34,7 @@ class _InjuryProtectionViewState extends State<InjuryProtectionView> {
     final theme = context.appTheme;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Color(0xffEAF6EC),
+        color: theme.accentSurface,
         borderRadius: BorderRadius.circular(16),
       ),
       child: ListTile(

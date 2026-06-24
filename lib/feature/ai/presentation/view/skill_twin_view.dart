@@ -50,7 +50,7 @@ class SkillTwinView extends StatelessWidget {
                   child: Container(
                     padding: EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: Color(0xffEAF6EC),
+                      color: theme.accentSurface,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(

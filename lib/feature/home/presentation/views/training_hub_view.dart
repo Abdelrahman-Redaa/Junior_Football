@@ -269,9 +269,9 @@ class _WeeklyProgressCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.backgroundColor,
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: const Color(0xFFE8E8E8)),
+        border: Border.all(color: theme.borderColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,7 +292,7 @@ class _WeeklyProgressCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 10.h,
-              backgroundColor: const Color(0xFFE3E3E3),
+              backgroundColor: theme.progressTrack,
               valueColor: AlwaysStoppedAnimation(theme.primary),
             ),
           ),
@@ -335,25 +335,26 @@ class _DayBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = context.appTheme.primary;
+    final theme = context.appTheme;
+    final color = theme.primary;
     return Column(
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 11.sp, color: Colors.black54),
+          style: theme.regular14.copyWith(fontSize: 11.sp, color: theme.subTitle),
         ),
         SizedBox(height: 6.h),
         Container(
           width: 26.r,
           height: 26.r,
           decoration: BoxDecoration(
-            color: active ? color : const Color(0xFFEDEDED),
+            color: active ? color : theme.progressTrack,
             shape: BoxShape.circle,
           ),
           child: Icon(
             active ? Icons.check : Icons.circle,
             size: active ? 15.r : 7.r,
-            color: active ? Colors.white : Colors.black26,
+            color: active ? theme.secondary : theme.neutral,
           ),
         ),
       ],
@@ -383,7 +384,7 @@ class _LessonCard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(14.w),
         decoration: BoxDecoration(
-          color: const Color(0xFFEAF6EC),
+          color: theme.accentSurface,
           borderRadius: BorderRadius.circular(14.r),
         ),
         child: Column(
@@ -394,7 +395,7 @@ class _LessonCard extends StatelessWidget {
               height: 38.r,
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: const Color(0xFFB9D7C0),
+                color: theme.accentSurfaceStrong,
                 borderRadius: BorderRadius.circular(10.r),
               ),
               child: SvgPicture.asset(icon),
@@ -404,7 +405,7 @@ class _LessonCard extends StatelessWidget {
               title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: theme.semiBold16.copyWith(color: const Color(0xFF11461D)),
+              style: theme.semiBold16,
             ),
             SizedBox(height: 4.h),
             Text(
@@ -412,7 +413,7 @@ class _LessonCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: theme.regular14.copyWith(
-                color: const Color(0xFF5B8D66),
+                color: theme.subTitle,
                 fontSize: 11.sp,
               ),
             ),
@@ -487,9 +488,9 @@ class _SessionShell extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(14.w),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.backgroundColor,
           borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(color: const Color(0xFFE8E8E8)),
+          border: Border.all(color: theme.borderColor),
         ),
         child: Row(
           children: [
@@ -497,12 +498,12 @@ class _SessionShell extends StatelessWidget {
               width: 44.r,
               height: 44.r,
               decoration: BoxDecoration(
-                color: done ? theme.primary : const Color(0xFFEAF6EC),
+                color: done ? theme.primary : theme.accentSurface,
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Icon(
                 done ? Icons.check : Icons.play_arrow_rounded,
-                color: done ? Colors.white : theme.primary,
+                color: done ? theme.secondary : theme.primary,
               ),
             ),
             SizedBox(width: 12.w),
@@ -576,14 +577,15 @@ class _EmptyPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.backgroundColor,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: const Color(0xFFE8E8E8)),
+        border: Border.all(color: theme.borderColor),
       ),
-      child: Text('home.noSession'.tr()),
+      child: Text('home.noSession'.tr(), style: theme.regular16),
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:junior_football/core/routes/routes_name.dart';
+import 'package:junior_football/core/utilities/theme_extension.dart';
 import 'package:junior_football/feature/home/domain/entity/weekly_plan_entity.dart';
 import 'package:junior_football/feature/home/presentation/view_model/home_state.dart';
 import 'package:junior_football/feature/home/presentation/view_model/home_view_model.dart';
@@ -11,8 +12,8 @@ class WeeklyPlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
     return BlocBuilder<HomeViewModel, HomeState>(
-     
       builder: (context, state) {
         if (state.weeklyPlan.isLoading) {
           return const Center(child: CircularProgressIndicator());
@@ -32,8 +33,9 @@ class WeeklyPlanCard extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.backgroundColor,
             borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: theme.borderColor),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.06),
@@ -51,10 +53,8 @@ class WeeklyPlanCard extends StatelessWidget {
                 children: [
                   Text(
                     'home.weeklyPlan'.tr(),
-                    style: const TextStyle(
+                    style: theme.semiBold24.copyWith(
                       fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF1A1A1A),
                       letterSpacing: -0.3,
                     ),
                   ),
@@ -64,10 +64,9 @@ class WeeklyPlanCard extends StatelessWidget {
                     },
                     child: Text(
                       'home.viewMore'.tr(),
-                      style: const TextStyle(
+                      style: theme.regular14.copyWith(
                         fontSize: 13,
-                        color: Color(0xFF888888),
-                        fontWeight: FontWeight.w400,
+                        color: theme.grey,
                       ),
                     ),
                   ),
@@ -77,7 +76,7 @@ class WeeklyPlanCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF7F7F7),
+                  color: theme.surfaceMuted,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Column(
@@ -86,19 +85,17 @@ class WeeklyPlanCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                         Text(
+                        Text(
                           'home.weekProgress'.tr(),
-                          style: TextStyle(
+                          style: theme.regular14.copyWith(
                             fontSize: 13,
-                            color: Color(0xFF666666),
-                            fontWeight: FontWeight.w400,
-                       ),
+                            color: theme.subTitle,
+                          ),
                         ),
                         Text(
                           '${(progress * 100).toInt()}%',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF2E7D32),
+                          style: theme.medium14.copyWith(
+                            color: theme.primary,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -110,10 +107,8 @@ class WeeklyPlanCard extends StatelessWidget {
                       child: LinearProgressIndicator(
                         value: progress,
                         minHeight: 10,
-                        backgroundColor: const Color(0xFFDDDDDD),
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          Color(0xFF2E7D32),
-                        ),
+                        backgroundColor: theme.progressTrack,
+                        valueColor: AlwaysStoppedAnimation<Color>(theme.primary),
                       ),
                     ),
                   ],
@@ -159,37 +154,37 @@ class _DayItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
     return Column(
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: theme.regular14.copyWith(
             fontSize: 11,
             fontWeight: FontWeight.w500,
-            color: status == DayStatus.upcoming
-                ? const Color(0xFFBBBBBB)
-                : const Color(0xFF555555),
+            color: status == DayStatus.upcoming ? theme.neutral : theme.subTitle,
           ),
         ),
         const SizedBox(height: 6),
-        _buildCircle(),
+        _buildCircle(context),
       ],
     );
   }
 
-  Widget _buildCircle() {
+  Widget _buildCircle(BuildContext context) {
+    final theme = context.appTheme;
     switch (status) {
       case DayStatus.completed:
         return Container(
           width: 38,
           height: 38,
-          decoration: const BoxDecoration(
-            color: Color(0xFF2E7D32),
+          decoration: BoxDecoration(
+            color: theme.primary,
             shape: BoxShape.circle,
           ),
-          child: const Icon(
+          child: Icon(
             Icons.check,
-            color: Colors.white,
+            color: theme.secondary,
             size: 20,
           ),
         );
@@ -199,19 +194,19 @@ class _DayItem extends StatelessWidget {
           width: 38,
           height: 38,
           decoration: BoxDecoration(
-            color: const Color(0xFF2E7D32),
+            color: theme.primary,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF2E7D32).withOpacity(0.35),
+                color: theme.primary.withOpacity(0.35),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
             ],
           ),
-          child: const Icon(
+          child: Icon(
             Icons.play_arrow_rounded,
-            color: Colors.white,
+            color: theme.secondary,
             size: 22,
           ),
         );
@@ -220,8 +215,8 @@ class _DayItem extends StatelessWidget {
         return Container(
           width: 38,
           height: 38,
-          decoration: const BoxDecoration(
-            color: Color(0xFFE0E0E0),
+          decoration: BoxDecoration(
+            color: theme.progressTrack,
             shape: BoxShape.circle,
           ),
         );

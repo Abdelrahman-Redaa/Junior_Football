@@ -1,7 +1,11 @@
 extension DateFormatter on String {
   String timeAgo() {
     try {
-      final dateTime = DateTime.parse(this).toLocal();
+      String dateStr = this;
+      if (!dateStr.endsWith('Z') && !dateStr.contains(RegExp(r'[+-]\d{2}:\d{2}$'))) {
+        dateStr += 'Z';
+      }
+      final dateTime = DateTime.parse(dateStr).toLocal();
       final now = DateTime.now();
 
       final difference = now.difference(dateTime);

@@ -73,7 +73,7 @@ class _BottomNavigationViewState extends State<BottomNavigationView> {
           child: BottomAppBar(
             shape: const CircularNotchedRectangle(),
             notchMargin: 15.w,
-            color: theme.secondary,
+            color: theme.backgroundColor,
             height: 95.h,
             child: SizedBox(
               height: 45,

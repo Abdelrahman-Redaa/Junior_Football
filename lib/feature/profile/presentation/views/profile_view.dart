@@ -321,7 +321,7 @@ class _VideoTile extends StatelessWidget {
       child: Container(
         width: 136.w,
         decoration: BoxDecoration(
-          color: const Color(0xFFE8F5EC),
+          color: theme.accentSurface,
           borderRadius: BorderRadius.circular(10.r),
           border: Border.all(color: theme.primary.withValues(alpha: 0.35)),
         ),

@@ -17,7 +17,6 @@ class AiReportView extends StatelessWidget {
     var theme = context.appTheme;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text("aiReportView.title".tr()),
@@ -101,12 +100,12 @@ class AiReportView extends StatelessWidget {
   Widget _skillProgressBar({
     required String title,
     required double percentage,
-    Color backgroundColor = const Color(0xffE0E0E0),
-    Color progressColor = const Color(0xff28A745),
     double height = 15,
     required BuildContext context,
   }) {
     final theme = context.appTheme;
+    final backgroundColor = theme.progressTrack;
+    final progressColor = theme.primary;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

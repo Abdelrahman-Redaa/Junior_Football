@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:junior_football/core/di/di.dart';
+import 'package:junior_football/core/utilities/theme_extension.dart';
 import 'package:junior_football/feature/home/domain/entity/full_weekly_plan_entity.dart';
 import 'package:junior_football/feature/home/presentation/view_model/home_state.dart';
 import 'package:junior_football/feature/home/presentation/view_model/home_view_model.dart';
@@ -55,8 +56,9 @@ class _WeeklyPlanScreenState extends State<WeeklyPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: theme.backgroundColor,
       body: SafeArea(
         child: BlocProvider(
           create: (context) => getIt.get<HomeViewModel>()..doIntent(GetFullWeeklyPlanIntent()),
@@ -137,40 +139,42 @@ class _WeeklyPlanScreenState extends State<WeeklyPlanScreen> {
   }
 
   Widget _buildAppBar(BuildContext context) {
+    final theme = context.appTheme;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Row(
         children: [
           GestureDetector(
             onTap: () => Navigator.pop(context),
-            child: Icon(Icons.arrow_back, size: 24.sp, color: Colors.black87),
+            child: Icon(Icons.arrow_back, size: 24.sp, color: theme.textColor),
           ),
           Expanded(
             child: Center(
               child: Text(
                 'home.weeklyPlan'.tr(),
-                style: TextStyle(
+                style: theme.semiBold16.copyWith(
                   fontSize: 18.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: theme.textColor,
                 ),
               ),
             ),
           ),
-          SizedBox(width: 24.sp), 
+          SizedBox(width: 24.sp),
         ],
       ),
     );
   }
 
   Widget _buildWeekNavigator() {
+    final theme = context.appTheme;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.backgroundColor,
           borderRadius: BorderRadius.circular(14.r),
+          border: Border.all(color: theme.borderColor),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.04),
@@ -189,19 +193,17 @@ class _WeeklyPlanScreenState extends State<WeeklyPlanScreen> {
               children: [
                 Text(
                   '${"weeklyPlan.week".tr()}$_weekIndex',
-                  style: TextStyle(
+                  style: theme.regular14.copyWith(
                     fontSize: 12.sp,
-                    color: const Color(0xFF999999),
-                    fontWeight: FontWeight.w400,
+                    color: theme.grey,
                   ),
                 ),
                 SizedBox(height: 2.h),
                 Text(
                   _weekRange,
-                  style: TextStyle(
+                  style: theme.semiBold16.copyWith(
                     fontSize: 14.sp,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black87,
+                    color: theme.textColor,
                   ),
                 ),
               ],
@@ -216,16 +218,17 @@ class _WeeklyPlanScreenState extends State<WeeklyPlanScreen> {
   }
 
   Widget _navButton(IconData icon, VoidCallback onTap) {
+    final theme = context.appTheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 32.w,
         height: 32.h,
         decoration: BoxDecoration(
-          color: const Color(0xFFF0F0F0),
+          color: theme.surfaceMuted,
           borderRadius: BorderRadius.circular(8.r),
         ),
-        child: Icon(icon, size: 20.sp, color: Colors.black54),
+        child: Icon(icon, size: 20.sp, color: theme.subTitle),
       ),
     );
   }
@@ -261,19 +264,20 @@ class _DayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
     final bool active = plan.isActive;
 
     return Container(
       decoration: BoxDecoration(
-        color: active ? const Color(0xFF2E7D32) : Colors.white,
+        color: active ? theme.primary : theme.backgroundColor,
         borderRadius: BorderRadius.circular(18.r),
         border: active
             ? null
-            : Border.all(color: const Color(0xFFE8E8E8), width: 1),
+            : Border.all(color: theme.borderColor, width: 1),
         boxShadow: [
           BoxShadow(
             color: active
-                ? const Color(0xFF2E7D32).withOpacity(0.25)
+                ? theme.primary.withOpacity(0.25)
                 : Colors.black.withOpacity(0.04),
             blurRadius: active ? 14 : 8,
             offset: const Offset(0, 4),
@@ -306,8 +310,8 @@ class _DayCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: active
-                                  ? Colors.white.withOpacity(0.75)
-                                  : const Color(0xFF999999),
+                                  ? theme.secondary.withOpacity(0.75)
+                                  : theme.grey,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -317,7 +321,7 @@ class _DayCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 20.sp,
                               fontWeight: FontWeight.w700,
-                              color: active ? Colors.white : Colors.black87,
+                              color: active ? theme.secondary : theme.textColor,
                               letterSpacing: -0.3,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -329,8 +333,8 @@ class _DayCard extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                       decoration: BoxDecoration(
                         color: active
-                            ? Colors.white.withOpacity(0.15)
-                            : const Color(0xFFF2F2F2),
+                            ? theme.secondary.withOpacity(0.15)
+                            : theme.surfaceMuted,
                         borderRadius: BorderRadius.circular(20.r),
                       ),
                       child: Row(
@@ -350,7 +354,7 @@ class _DayCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
-                              color: active ? Colors.white : Colors.black87,
+                              color: active ? theme.secondary : theme.textColor,
                             ),
                           ),
                         ],
@@ -363,6 +367,7 @@ class _DayCard extends StatelessWidget {
                   children: [
                     Flexible(
                       child: _statChip(
+                        context: context,
                         icon: Icons.format_list_bulleted,
                         label: '${plan.tasks} ${"weeklyPlan.sessions".tr()}',
                         active: active,
@@ -371,6 +376,7 @@ class _DayCard extends StatelessWidget {
                     SizedBox(width: 16.w),
                     Flexible(
                       child: _statChip(
+                        context: context,
                         icon: Icons.access_time_rounded,
                         label: '${plan.minutes} ${"weeklyPlan.mins".tr()}',
                         active: active,
@@ -380,13 +386,15 @@ class _DayCard extends StatelessWidget {
                     Icon(
                       Icons.chevron_right,
                       size: 20.sp,
-                      color: active ? Colors.white.withOpacity(0.8) : Colors.black45,
+                      color: active
+                          ? theme.secondary.withOpacity(0.8)
+                          : theme.subTitle,
                     ),
                   ],
                 ),
                 if (active && plan.sessions.isNotEmpty) ...[
                   SizedBox(height: 16.h),
-                  const Divider(color: Colors.white24),
+                  Divider(color: theme.secondary.withOpacity(0.24)),
                   SizedBox(height: 8.h),
                   ...plan.sessions.take(2).map((session) => Padding(
                     padding: EdgeInsets.only(bottom: 8.h),
@@ -394,13 +402,13 @@ class _DayCard extends StatelessWidget {
                       children: [
                         Icon(session.isCompleted ? Icons.check_circle : Icons.radio_button_unchecked, 
                              size: 16.sp, 
-                             color: session.isCompleted ? Colors.white : Colors.white60),
+                             color: session.isCompleted ? theme.secondary : theme.secondary.withOpacity(0.6)),
                         SizedBox(width: 8.w),
                         Expanded(
                           child: Text(
                             session.title,
                             style: TextStyle(
-                              color: Colors.white,
+                              color: theme.secondary,
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w500,
                             ),
@@ -421,17 +429,19 @@ class _DayCard extends StatelessWidget {
   }
 
   Widget _statChip({
+    required BuildContext context,
     required IconData icon,
     required String label,
     required bool active,
   }) {
+    final theme = context.appTheme;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
           icon,
           size: 14.sp,
-          color: active ? Colors.white.withOpacity(0.8) : const Color(0xFF888888),
+          color: active ? theme.secondary.withOpacity(0.8) : theme.grey,
         ),
         SizedBox(width: 6.w),
         Flexible(
@@ -439,7 +449,9 @@ class _DayCard extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 12.sp,
-              color: active ? Colors.white.withOpacity(0.9) : const Color(0xFF666666),
+              color: active
+                  ? theme.secondary.withOpacity(0.9)
+                  : theme.subTitle,
               fontWeight: FontWeight.w500,
             ),
             overflow: TextOverflow.ellipsis,
@@ -458,12 +470,13 @@ class _SoccerBallDecor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
     final Color color = active
-        ? Colors.white.withOpacity(0.12)
-        : const Color(0xFF2E7D32).withOpacity(0.15);
+        ? theme.secondary.withOpacity(0.12)
+        : theme.primary.withOpacity(0.15);
     final Color pentagons = active
-        ? Colors.white.withOpacity(0.18)
-        : const Color(0xFF2E7D32).withOpacity(0.25);
+        ? theme.secondary.withOpacity(0.18)
+        : theme.primary.withOpacity(0.25);
 
     return SizedBox(
       width: 90.w,

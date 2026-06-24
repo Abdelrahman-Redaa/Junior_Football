@@ -58,16 +58,11 @@ class _AnalyzeVideoViewState extends State<AnalyzeVideoView> {
     var theme = context.appTheme;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
           "analyzeVideo.title".tr(),
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Color(0xff1C1C1C),
-          ),
+          style: theme.semiBold24,
         ),
         centerTitle: true,
       ),

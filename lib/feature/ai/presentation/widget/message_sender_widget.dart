@@ -46,13 +46,13 @@ class MessageSenderWidget extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 17, top: 7, right: 14, left: 14),
       constraints: BoxConstraints(maxWidth: 266),
       decoration: BoxDecoration(
-        color: Color(0xffEAF6EC),
+        color: theme.accentSurface,
         borderRadius: BorderRadius.circular(16),
       ),
 
       child: Text(
         message,
-        style: theme.medium14.copyWith(color: theme.surface),
+        style: theme.medium14.copyWith(color: theme.textColor),
       ),
     );
   }

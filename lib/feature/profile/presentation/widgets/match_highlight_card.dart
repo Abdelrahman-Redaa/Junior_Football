@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:junior_football/core/utilities/theme_extension.dart';
 
 class MatchHighlightCard extends StatelessWidget {
   final String matchLabel;
@@ -18,10 +19,12 @@ class MatchHighlightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.backgroundColor,
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: theme.borderColor),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -49,13 +52,13 @@ class MatchHighlightCard extends StatelessWidget {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.green.shade700,
+                    color: theme.primary,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     matchLabel,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: theme.medium14.copyWith(
+                      color: theme.secondary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -75,16 +78,16 @@ class MatchHighlightCard extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.play_arrow,
-                        color: Colors.white,
+                        color: theme.secondary,
                         size: 16,
                       ),
                       const SizedBox(width: 6),
                       Text(
                         duration,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: theme.medium14.copyWith(
+                          color: theme.secondary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -101,15 +104,15 @@ class MatchHighlightCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: theme.semiBold16.copyWith(fontSize: 16),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   date,
-                  style: TextStyle(color: Colors.black54, fontSize: 13),
+                  style: theme.regular14.copyWith(
+                    color: theme.subTitle,
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),

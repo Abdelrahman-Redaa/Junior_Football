@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:junior_football/core/theme/theme_cubit.dart';
 import 'package:junior_football/core/utilities/theme_extension.dart';
 import 'package:junior_football/feature/profile/presentation/widgets/card_content.dart';
 import 'package:junior_football/feature/profile/presentation/view_model/profile_view_model.dart';
@@ -47,13 +48,17 @@ class SettingSections extends StatelessWidget {
           },
         ),
         const SizedBox(height: 12),
-        _SettingsToggleTile(
-          title: 'settings.darkMode'.tr(),
-          desc: 'settings.darkModeDesc'.tr(),
-          icon: Icons.dark_mode_outlined,
-          value: false, // Wire up later
-          onChanged: (value) {
-            // Wire up later
+        BlocBuilder<ThemeCubit, ThemeMode>(
+          builder: (context, themeMode) {
+            return _SettingsToggleTile(
+              title: 'settings.darkMode'.tr(),
+              desc: 'settings.darkModeDesc'.tr(),
+              icon: Icons.dark_mode_outlined,
+              value: themeMode == ThemeMode.dark,
+              onChanged: (value) {
+                context.read<ThemeCubit>().setDarkMode(value);
+              },
+            );
           },
         ),
         const SizedBox(height: 12),

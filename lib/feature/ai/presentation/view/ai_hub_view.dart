@@ -37,8 +37,9 @@ class _AiHubViewState extends State<AiHubView> {
                   Navigator.pushNamed(context, _cardModel[index].routeName),
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xff6FC482)),
+                  border: Border.all(color: theme.primary),
                   borderRadius: BorderRadius.circular(8),
+                  color: theme.secondary,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,

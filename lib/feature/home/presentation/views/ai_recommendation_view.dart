@@ -20,7 +20,6 @@ class AiRecommendationView extends StatelessWidget {
           style: theme.semiBold24.copyWith(fontSize: 20.sp, color: theme.textColor),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
@@ -88,7 +87,7 @@ class AiRecommendationView extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.backgroundColor,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(

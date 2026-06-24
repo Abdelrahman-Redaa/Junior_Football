@@ -7,9 +7,13 @@ import 'package:junior_football/core/routes/routes_name.dart';
 import 'package:junior_football/feature/community/presentation/view_model/community_state.dart';
 import 'package:junior_football/feature/community/presentation/view_model/community_view_model.dart';
 import 'package:junior_football/feature/community/presentation/widgets/create_post_card.dart';
+import 'package:junior_football/feature/profile/presentation/view_model/profile_view_model.dart';
+import 'package:junior_football/feature/profile/presentation/view_model/profile_state.dart';
 
+import 'dart:convert';
+import 'package:junior_football/core/constants/keys.dart';
+import 'package:junior_football/core/utilities/app_local_storage.dart';
 import '../widgets/community_post_card.dart';
-
 class CommunityView extends StatefulWidget {
   const CommunityView({super.key});
 
@@ -18,6 +22,41 @@ class CommunityView extends StatefulWidget {
 }
 
 class _CommunityViewState extends State<CommunityView> {
+  String? _currentUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    final profileVm = getIt<ProfileViewModel>();
+    if (profileVm.state.profile.data == null && !profileVm.state.profile.isLoading) {
+      profileVm.doIntent(GetProfileIntent());
+    }
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    try {
+      final token = await AppLocalStorage.getSecuredString(key: AppKeys.token);
+      if (token.isNotEmpty) {
+        final parts = token.split('.');
+        if (parts.length == 3) {
+          final payload = parts[1];
+          final String normalized = base64Url.normalize(payload);
+          final String resp = utf8.decode(base64Url.decode(normalized));
+          final json = jsonDecode(resp);
+          setState(() {
+            _currentUserId = json['userId'] ??
+                json['sub'] ??
+                json['id'] ??
+                json['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Failed to decode token: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -131,17 +170,21 @@ class _CommunityViewState extends State<CommunityView> {
 
               final posts = feedState.data ?? [];
 
-              return RefreshIndicator(
-                onRefresh: () async {
-                  context.read<CommunityViewModel>().doIntent(
-                    GetCommunityPostsIntent(),
-                  );
-                },
-                child: ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 32.h),
-                  itemCount: posts.length + 1, // +1 for the CreatePostCard
-                  itemBuilder: (context, index) {
+              return BlocBuilder<ProfileViewModel, ProfileState>(
+                bloc: getIt<ProfileViewModel>(),
+                builder: (context, profileState) {
+                  final currentUserId = profileState.profile.data?.userId;
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      context.read<CommunityViewModel>().doIntent(
+                        GetCommunityPostsIntent(),
+                      );
+                    },
+                    child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 32.h),
+                      itemCount: posts.length + 1, // +1 for the CreatePostCard
+                      itemBuilder: (context, index) {
                     // First item is always the CreatePostCard
                     if (index == 0) {
                       return Padding(
@@ -152,6 +195,7 @@ class _CommunityViewState extends State<CommunityView> {
 
                     // Adjust index for actual posts
                     final post = posts[index - 1];
+                    debugPrint("CommunityPostCard [${post.id}]: currentUserId=$currentUserId, post.userId=${post.userId}");
 
                     return Padding(
                       padding: EdgeInsets.only(bottom: 16.h),
@@ -178,14 +222,14 @@ class _CommunityViewState extends State<CommunityView> {
                                 );
                               },
                         onUnfollowTap:
-                            post.userId == null || post.userId!.isEmpty
+                            post.userId == null || post.userId!.isEmpty || post.userId == _currentUserId
                             ? null
                             : () {
                                 context.read<CommunityViewModel>().doIntent(
                                   UnfollowCommunityUserIntent(post.userId!),
                                 );
                               },
-                        onDeleteTap: post.id == null || post.id!.isEmpty
+                        onDeleteTap: post.id == null || post.id!.isEmpty || post.userId != _currentUserId
                             ? null
                             : () => _confirmDeletePost(context, post.id!),
                         onLikeTap: () {
@@ -206,11 +250,13 @@ class _CommunityViewState extends State<CommunityView> {
                 ),
               );
             },
-          ),
-        ),
+          );
+        },
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 
   Future<void> _confirmDeletePost(BuildContext context, String postId) async {
     final shouldDelete = await showDialog<bool>(

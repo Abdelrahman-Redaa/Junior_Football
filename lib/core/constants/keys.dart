@@ -1,4 +1,5 @@
-class AppKeys{
-  static const String token="token";
-  static const String refreshToken="refreshToken";
+class AppKeys {
+  static const String token = 'token';
+  static const String refreshToken = 'refreshToken';
+  static const String darkMode = 'darkMode';
 }

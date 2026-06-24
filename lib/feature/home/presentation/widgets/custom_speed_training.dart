@@ -30,7 +30,7 @@ class CustomSpeedTraining extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
       decoration: BoxDecoration(
-        color: const Color(0xFFE9F2EB),
+        color: theme.accentSurface,
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Column(
@@ -39,17 +39,16 @@ class CustomSpeedTraining extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 4.w),
                 width: 35.w,
                 height: 35.h,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFB9D7C0),
+                  color: theme.accentSurfaceStrong,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
-                child:SvgPicture.asset(
-                    SVGAssets.football,
+                child: SvgPicture.asset(
+                  SVGAssets.football,
                 ),
               ),
 
@@ -64,7 +63,7 @@ class CustomSpeedTraining extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.semiBold24.copyWith(
-                        color: const Color(0xFF11461D),
+                        color: theme.textColor,
                       ),
                     ),
 
@@ -73,9 +72,9 @@ class CustomSpeedTraining extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.regular14.copyWith(
-                        color: const Color(0xFF11461D),
+                        color: theme.subTitle,
                         fontSize: 10.sp,
-                      )
+                      ),
                     ),
                   ],
                 ),
@@ -86,27 +85,24 @@ class CustomSpeedTraining extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-
                   Text(
                     duration,
-                    style:theme.semiBold16.copyWith(
-                      color: const Color(0xFF11461D),
-                      fontSize: 18.sp
-                    )
+                    style: theme.semiBold16.copyWith(
+                      color: theme.textColor,
+                      fontSize: 18.sp,
+                    ),
                   ),
 
-
-                   Text(
-                      rounds,
-                      textAlign: TextAlign.end,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style:theme.regular14.copyWith(
-                        color: const Color(0xFF68A977),
-                        fontSize: 10.sp,
-                      ),
+                  Text(
+                    rounds,
+                    textAlign: TextAlign.end,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.regular14.copyWith(
+                      color: theme.primary,
+                      fontSize: 10.sp,
+                    ),
                   ),
-
                 ],
               ),
             ],
@@ -114,23 +110,22 @@ class CustomSpeedTraining extends StatelessWidget {
 
           SizedBox(height: 15.h),
 
-
           Row(
             children: [
               _infoItem(
-                icon:  SVGAssets.clock,
+                icon: SVGAssets.clock,
                 text: duration,
                 context: context,
               ),
               SizedBox(width: 15.w),
               _infoItem(
-                icon:  SVGAssets.medium,
+                icon: SVGAssets.medium,
                 text: level,
                 context: context,
               ),
               SizedBox(width: 15.w),
               _infoItem(
-                icon:  SVGAssets.legs,
+                icon: SVGAssets.legs,
                 text: category,
                 context: context,
               ),
@@ -146,22 +141,22 @@ class CustomSpeedTraining extends StatelessWidget {
     required String text,
     required BuildContext context,
   }) {
-    var theme=context.appTheme;
+    var theme = context.appTheme;
     return Row(
       children: [
         SvgPicture.asset(
           icon,
           height: 16.h,
           fit: BoxFit.contain,
-          color: const Color(0xFF68A977),
+          colorFilter: ColorFilter.mode(theme.primary, BlendMode.srcIn),
         ),
         SizedBox(width: 5.w),
         Text(
           text,
           style: theme.regular14.copyWith(
-            color: const Color(0xFF68A977),
+            color: theme.primary,
             fontSize: 12.sp,
-    )
+          ),
         ),
       ],
     );

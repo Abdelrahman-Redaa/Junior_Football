@@ -207,9 +207,9 @@ class _HomeViewState extends State<HomeView> {
                         return Container(
                           padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: theme.backgroundColor,
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: Color((0xffD9D9D9))),
+                            border: Border.all(color: theme.borderColor),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withValues(alpha: 0.05),
@@ -404,7 +404,7 @@ class _HomeViewState extends State<HomeView> {
                                   horizontal: 16.w,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFEAF6EC),
+                                  color: theme.accentSurface,
                                   borderRadius: BorderRadius.circular(12.r),
                                 ),
                                 child: Row(
@@ -415,7 +415,7 @@ class _HomeViewState extends State<HomeView> {
                                       height: 35.h,
                                       padding: EdgeInsets.all(4.w),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFB9D7C0),
+                                        color: theme.accentSurfaceStrong,
                                         borderRadius: BorderRadius.circular(
                                           8.r,
                                         ),
@@ -469,7 +469,7 @@ class _HomeViewState extends State<HomeView> {
                             horizontal: 16.w,
                           ),
                           decoration: BoxDecoration(
-                            color: Color(0xFFEAF6EC),
+                            color: theme.accentSurface,
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                           child: Row(
@@ -480,7 +480,7 @@ class _HomeViewState extends State<HomeView> {
                                 height: 35.h,
                                 padding: EdgeInsets.all(4.w),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFB9D7C0),
+                                  color: theme.accentSurfaceStrong,
                                   borderRadius: BorderRadius.circular(8.r),
                                 ),
                                 child: SvgPicture.asset(SVGAssets.football),
@@ -516,7 +516,7 @@ class _HomeViewState extends State<HomeView> {
                             horizontal: 16.w,
                           ),
                           decoration: BoxDecoration(
-                            color: Color(0xFFEAF6EC),
+                            color: theme.accentSurface,
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                           child: Row(
@@ -527,7 +527,7 @@ class _HomeViewState extends State<HomeView> {
                                 height: 35.h,
                                 padding: EdgeInsets.all(4.w),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFB9D7C0),
+                                  color: theme.accentSurfaceStrong,
                                   borderRadius: BorderRadius.circular(8.r),
                                 ),
                                 child: SvgPicture.asset(

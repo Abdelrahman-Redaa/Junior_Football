@@ -12,3 +12,14 @@ extension ThemeExtensionX on BuildContext {
     return ext;
   }
 }
+
+extension AppThemeSurface on AppThemeExtension {
+  Color get surfaceMuted =>
+      Color.alphaBlend(primary.withValues(alpha: 0.06), backgroundColor);
+
+  Color get accentSurface => primary.withValues(alpha: 0.12);
+
+  Color get accentSurfaceStrong => primary.withValues(alpha: 0.25);
+
+  Color get progressTrack => borderColor.withValues(alpha: 0.6);
+}

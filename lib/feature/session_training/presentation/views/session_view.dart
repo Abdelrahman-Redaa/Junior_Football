@@ -84,7 +84,7 @@ class _SessionViewState extends State<SessionView> {
           child: ListTile(
             title: Text(listOfInstructions[index], style: theme.regular14),
             leading: CircleAvatar(
-              backgroundColor: const Color(0xffE9F2EB),
+              backgroundColor: theme.accentSurface,
               child: Text(
                 (index + 1).toString(),
                 style: theme.regular14.copyWith(color: theme.primary),

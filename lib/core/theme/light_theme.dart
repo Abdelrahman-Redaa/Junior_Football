@@ -15,6 +15,10 @@ class LightTheme extends AppTheme {
     inputDecorationTheme: inputDecorationTheme,
     elevatedButtonTheme: elevatedButtonThemeData,
     scaffoldBackgroundColor: color.backgroundColor,
+    cardTheme: CardThemeData(
+      color: color.backgroundColor,
+      elevation: 0,
+    ),
     extensions: [appThemeExtension],
     appBarTheme: appBarTheme,
     fontFamily: "Nunito",
@@ -90,8 +94,10 @@ class LightTheme extends AppTheme {
 
   @override
   AppBarTheme get appBarTheme => AppBarTheme(
+    backgroundColor: color.backgroundColor,
     foregroundColor: color.surface,
     elevation: 0,
+    scrolledUnderElevation: 0,
     iconTheme: const IconThemeData(size: 20, color: Colors.black),
     titleTextStyle: appThemeExtension.semiBold24.copyWith(color: color.surface),
     centerTitle: true,

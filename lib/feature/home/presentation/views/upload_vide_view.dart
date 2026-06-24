@@ -51,7 +51,6 @@ class _UploadVideViewState extends State<UploadVideView> {
     final theme = context.appTheme;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text("uploadVideo.videoInput".tr()),
@@ -92,7 +91,7 @@ class _UploadVideViewState extends State<UploadVideView> {
                           borderRadius: BorderRadius.circular(20),
                           child: LinearProgressIndicator(
                             minHeight: 12,
-                            backgroundColor: Colors.grey.shade300,
+                            backgroundColor: theme.progressTrack,
                             valueColor: AlwaysStoppedAnimation(theme.primary),
                           ),
                         ),
@@ -161,7 +160,7 @@ class _CustomActionCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12.r),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.backgroundColor,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: theme.primary.withOpacity(0.5), width: 2),
         ),

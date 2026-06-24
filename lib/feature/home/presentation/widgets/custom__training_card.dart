@@ -24,10 +24,11 @@ class TrainingCard extends StatelessWidget {
     final theme = context.appTheme;
 
     return Card(
-      elevation: 5,
-      color: theme.secondary,
+      elevation: 0,
+      color: theme.backgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.r),
+        side: BorderSide(color: theme.borderColor),
       ),
       child: Padding(
         padding:  EdgeInsets.all(20.w),
@@ -125,7 +126,7 @@ class _ProgressBar extends StatelessWidget {
       child: LinearProgressIndicator(
         value: progress,
         minHeight: 10,
-        backgroundColor: const Color(0xffE0E0E0),
+        backgroundColor: theme.progressTrack,
         valueColor: AlwaysStoppedAnimation(theme.primary),
       ),
     );

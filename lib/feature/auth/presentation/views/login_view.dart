@@ -162,16 +162,19 @@ class OrDivider extends StatelessWidget {
     return Row(
       spacing: 16,
       children: [
-        _dividerLine(),
+        _dividerLine(theme),
         Text(
           "or",
           style: theme.regular14.copyWith(fontSize: 12, color: theme.subTitle),
         ),
-        _dividerLine(),
+        _dividerLine(theme),
       ],
     );
   }
 
-  Widget _dividerLine() =>
-      Expanded(child: Divider(color: Color(0xFFE8ECF4), thickness: 2));
+  Widget _dividerLine(dynamic theme) {
+    return Expanded(
+      child: Divider(color: theme.borderColor, thickness: 2),
+    );
+  }
 }

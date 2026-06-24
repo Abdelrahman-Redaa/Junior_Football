@@ -69,11 +69,18 @@ class PageViewBody extends StatelessWidget {
 
   Widget _buildSessionSummery(BuildContext context) {
     final theme = context.appTheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final fillColor = isDark
+        ? model.sessionSummery.iconColor.withValues(alpha: 0.2)
+        : model.sessionSummery.bgColor;
+    final borderColor = isDark
+        ? model.sessionSummery.iconColor.withValues(alpha: 0.35)
+        : model.sessionSummery.bgColor;
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(color: model.sessionSummery.bgColor),
-        boxShadow: [BoxShadow(blurRadius: 1, color: Colors.white)],
+        border: Border.all(color: borderColor),
+        boxShadow: [BoxShadow(blurRadius: 1, color: theme.borderColor)],
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -94,7 +101,7 @@ class PageViewBody extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  color: model.sessionSummery.bgColor,
+                  color: fillColor,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: SvgPicture.asset(
@@ -112,7 +119,7 @@ class PageViewBody extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
-                  color: model.sessionSummery.bgColor,
+                  color: fillColor,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: SvgPicture.asset(model.sessionSummery.trainingImage),
