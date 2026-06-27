@@ -16,6 +16,8 @@ import 'package:junior_football/feature/home/data/models/response/community_feed
 import 'package:junior_football/feature/home/data/models/response/upload_video_response.dart';
 import 'package:junior_football/feature/home/data/models/response/full_weekly_plan_response.dart';
 import 'package:junior_football/feature/home/data/models/response/training_dashboard.dart';
+import 'package:junior_football/feature/home/data/models/response/training_lesson_response.dart';
+import 'package:junior_football/feature/home/data/models/response/training_weekly_plan_response.dart';
 import 'package:junior_football/feature/auth/data/models/response_models/verify_otp_response.dart';
 import 'package:junior_football/feature/profile/data/models/response_models/user_profile_dto.dart';
 import 'package:retrofit/retrofit.dart';
@@ -105,6 +107,24 @@ abstract class ApiClient {
   @GET(EndPoint.trainingDashboard)
   Future<TrainingDashboard> getTrainingDashboard();
 
+  @GET(EndPoint.trainingWeeklyPlan)
+  Future<TrainingWeeklyPlanResponse> getTrainingWeeklyPlan();
+
+  @GET(EndPoint.trainingDailySession)
+  Future<TodaySession> getTrainingDailySession();
+
+  @GET(EndPoint.trainingRecommendations)
+  Future<List<QuickRecommendations>> getTrainingRecommendations();
+
+  @GET(EndPoint.speedLessons)
+  Future<LessonsListResponse> getSpeedLessons();
+
+  @GET(EndPoint.shootingLessons)
+  Future<LessonsListResponse> getShootingLessons();
+
+  @GET(EndPoint.passingLessons)
+  Future<LessonsListResponse> getPassingLessons();
+
   @MultiPart()
   @POST(EndPoint.uploadProfilePicture)
   Future<UserProfileDto> uploadProfilePicture({
@@ -152,7 +172,5 @@ abstract class ApiClient {
   });
 
   @POST(EndPoint.changePassword)
-  Future<dynamic> changePassword({
-    @Body() required Map<String, dynamic> body,
-  });
+  Future<dynamic> changePassword({@Body() required Map<String, dynamic> body});
 }

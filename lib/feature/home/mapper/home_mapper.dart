@@ -4,12 +4,16 @@ import 'package:junior_football/feature/home/data/models/response/upload_video_r
 import 'package:junior_football/feature/home/data/models/response/weekly_process_response.dart';
 import 'package:junior_football/feature/home/data/models/response/full_weekly_plan_response.dart';
 import 'package:junior_football/feature/home/data/models/response/training_dashboard.dart';
+import 'package:junior_football/feature/home/data/models/response/training_lesson_response.dart';
+import 'package:junior_football/feature/home/data/models/response/training_weekly_plan_response.dart';
 import 'package:junior_football/feature/home/domain/entity/analysis_ai_response_entity.dart';
 import 'package:junior_football/feature/home/domain/entity/community_feed_entity.dart';
 import 'package:junior_football/feature/home/domain/entity/upload_video_entity.dart';
 import 'package:junior_football/feature/home/domain/entity/weekly_plan_entity.dart';
 import 'package:junior_football/feature/home/domain/entity/training_dashboard_entity.dart';
 import 'package:junior_football/feature/home/domain/entity/full_weekly_plan_entity.dart';
+import 'package:junior_football/feature/home/domain/entity/training_lesson_entity.dart';
+import 'package:junior_football/feature/home/domain/entity/training_weekly_plan_entity.dart';
 
 extension UploadVideoMapper on UploadVideoResponse {
   UploadVideoEntity toEntity() => UploadVideoEntity(videoUrl: videoUrl ?? "");
@@ -233,6 +237,88 @@ extension DrillsMapper on Drills {
       repetitions: repetitions ?? 0,
       videoUrl: videoUrl ?? '',
       orderIndex: orderIndex ?? 0,
+    );
+  }
+}
+
+extension TrainingWeeklyPlanResponseMapper on TrainingWeeklyPlanResponse {
+  TrainingWeeklyPlanEntity toEntity() {
+    return TrainingWeeklyPlanEntity(
+      weekStartDate: weekStartDate ?? '',
+      weekEndDate: weekEndDate ?? '',
+      completedDays: completedDays ?? 0,
+      totalDays: totalDays ?? 0,
+      completionProgress: (completionProgress ?? 0).toDouble(),
+      totalXpAvailable: totalXpAvailable ?? 0,
+      totalXpEarned: totalXpEarned ?? 0,
+      days: days?.map((e) => e.toEntity()).toList() ?? [],
+    );
+  }
+}
+
+extension TrainingWeeklyDayResponseMapper on TrainingWeeklyDayResponse {
+  TrainingWeeklyDayEntity toEntity() {
+    return TrainingWeeklyDayEntity(
+      planId: planId ?? '',
+      day: day ?? '',
+      dayShort: dayShort ?? '',
+      date: date ?? '',
+      isToday: isToday ?? false,
+      isCompleted: isCompleted ?? false,
+      hasSession: hasSession ?? false,
+      isRestDay: isRestDay ?? false,
+      xpEarned: xpEarned ?? 0,
+      session: session?.toEntity(),
+    );
+  }
+}
+
+extension LessonsListResponseMapper on LessonsListResponse {
+  LessonsListEntity toEntity() {
+    return LessonsListEntity(
+      category: category ?? '',
+      title: title ?? '',
+      description: description ?? '',
+      featuredVideoUrl: featuredVideoUrl ?? '',
+      totalLessons: totalLessons ?? 0,
+      completedLessons: completedLessons ?? 0,
+      progressPercentage: (progressPercentage ?? 0).toDouble(),
+      totalXpAvailable: totalXpAvailable ?? 0,
+      lessons: lessons?.map((e) => e.toEntity()).toList() ?? [],
+    );
+  }
+}
+
+extension LessonResponseMapper on LessonResponse {
+  LessonEntity toEntity() {
+    return LessonEntity(
+      id: id ?? '',
+      title: title ?? '',
+      description: description ?? '',
+      durationMinutes: durationMinutes ?? 0,
+      xpReward: xpReward ?? 0,
+      difficulty: difficulty ?? '',
+      category: category ?? '',
+      coachNote: coachNote ?? '',
+      videoUrl: videoUrl ?? '',
+      thumbnailUrl: thumbnailUrl ?? '',
+      isCompleted: isCompleted ?? false,
+      isLocked: isLocked ?? false,
+      order: order ?? 0,
+      skills: skills ?? [],
+      drills: drills?.map((e) => e.toEntity()).toList() ?? [],
+    );
+  }
+}
+
+extension LessonDrillResponseMapper on LessonDrillResponse {
+  LessonDrillEntity toEntity() {
+    return LessonDrillEntity(
+      title: title ?? '',
+      description: description ?? '',
+      repetitions: repetitions ?? 0,
+      durationSeconds: durationSeconds ?? 0,
+      instructions: instructions ?? '',
     );
   }
 }

@@ -1,14 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:junior_football/core/constants/app_assets.dart';
 import 'package:junior_football/core/di/di.dart';
 import 'package:junior_football/core/routes/routes_name.dart';
 import 'package:junior_football/core/utilities/theme_extension.dart';
-import 'package:junior_football/feature/home/domain/entity/full_weekly_plan_entity.dart';
 import 'package:junior_football/feature/home/domain/entity/training_dashboard_entity.dart';
+import 'package:junior_football/feature/home/domain/entity/training_lesson_entity.dart';
+import 'package:junior_football/feature/home/domain/entity/training_weekly_plan_entity.dart';
 import 'package:junior_football/feature/home/presentation/view_model/home_state.dart';
 import 'package:junior_football/feature/home/presentation/view_model/home_view_model.dart';
 import 'package:junior_football/feature/session_training/presentation/views/session_view.dart';
@@ -28,187 +26,311 @@ class TrainingHubView extends StatelessWidget {
     return BlocProvider(
       create: (context) => getIt.get<HomeViewModel>()
         ..doIntent(GetTrainingDashboardIntent())
-        ..doIntent(GetFullWeeklyPlanIntent()),
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Training Hub')),
-        body: BlocBuilder<HomeViewModel, HomeState>(
-          builder: (context, state) {
-            if (state.trainingDashboard.isLoading &&
-                state.fullWeeklyPlan.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            final dashboard = state.trainingDashboard.data;
-            final plans = state.fullWeeklyPlan.data ?? [];
-            final todaySessions = _todaySessions(plans);
-
-            return RefreshIndicator(
-              onRefresh: () async {
-                context.read<HomeViewModel>()
-                  ..doIntent(GetTrainingDashboardIntent())
-                  ..doIntent(GetFullWeeklyPlanIntent());
-              },
-              child: ListView(
-                padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 24.h),
-                children: [
-                  _HeroPanel(dashboard: dashboard),
-                  SizedBox(height: 18.h),
-                  _WeeklyProgressCard(dashboard: dashboard),
-                  SizedBox(height: 18.h),
-                  Text('Lessons', style: context.appTheme.semiBold24),
-                  SizedBox(height: 10.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _LessonCard(
-                          title: 'Shooting lesson',
-                          subtitle: 'Finishing and accuracy',
-                          icon: SVGAssets.football,
-                          onTap: () => _openVideo(
-                            context,
-                            title: 'Shooting lesson',
-                            videoUrl: shootingVideo,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: _LessonCard(
-                          title: 'Passing lesson',
-                          subtitle: 'Control and delivery',
-                          icon: SVGAssets.passingLesson,
-                          onTap: () => _openVideo(
-                            context,
-                            title: 'Passing lesson',
-                            videoUrl: passingVideo,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20.h),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Daily Session', style: context.appTheme.semiBold24),
-                      if (state.fullWeeklyPlan.isLoading)
-                        SizedBox(
-                          width: 18.r,
-                          height: 18.r,
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
-                        ),
-                    ],
-                  ),
-                  SizedBox(height: 10.h),
-                  if (state.trainingDashboard.isError &&
-                      state.fullWeeklyPlan.isError)
-                    _ErrorPanel(
-                      message:
-                          state.trainingDashboard.errorMessage ??
-                          state.fullWeeklyPlan.errorMessage ??
-                          'Error loading training data',
-                    )
-                  else if (todaySessions.isNotEmpty)
-                    ...todaySessions.map(
-                      (session) => Padding(
-                        padding: EdgeInsets.only(bottom: 12.h),
-                        child: _DailySessionCard(
-                          session: session,
-                          onTap: () => _openVideo(
-                            context,
-                            title: session.title,
-                            videoUrl:
-                                session.drills.isNotEmpty &&
-                                    session.drills.first.videoUrl.isNotEmpty
-                                ? session.drills.first.videoUrl
-                                : dailyVideo,
-                          ),
-                        ),
-                      ),
-                    )
-                  else if (dashboard?.todaySession != null)
-                    _TodaySessionCard(
-                      session: dashboard!.todaySession!,
-                      onTap: () => _openVideo(
-                        context,
-                        title: dashboard.todaySession!.title,
-                        videoUrl: dailyVideo,
-                      ),
-                    )
-                  else
-                    const _EmptyPanel(),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  List<HomeSessionEntity> _todaySessions(List<FullWeeklyPlanEntity> plans) {
-    for (final day in plans) {
-      if (day.isToday) return day.sessions;
-    }
-    return plans.isNotEmpty ? plans.first.sessions : [];
-  }
-
-  void _openVideo(
-    BuildContext context, {
-    required String title,
-    required String videoUrl,
-  }) {
-    Navigator.pushNamed(
-      context,
-      AppRoutes.sessionView,
-      arguments: TrainingVideoArgs(title: title, videoUrl: videoUrl),
+        ..doIntent(GetTrainingDailySessionIntent())
+        ..doIntent(GetTrainingWeeklyPlanIntent())
+        ..doIntent(GetTrainingRecommendationsIntent())
+        ..doIntent(GetTrainingLessonsIntent()),
+      child: const DefaultTabController(length: 5, child: _TrainingHubBody()),
     );
   }
 }
 
-class _HeroPanel extends StatelessWidget {
-  const _HeroPanel({required this.dashboard});
+class _TrainingHubBody extends StatelessWidget {
+  const _TrainingHubBody();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Training Hub'),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(52.h),
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TabBar(
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
+              indicatorColor: theme.primary,
+              labelColor: theme.primary,
+              unselectedLabelColor: theme.neutral,
+              tabs: const [
+                Tab(text: 'Home'),
+                Tab(text: 'Today'),
+                Tab(text: 'Weekly'),
+                Tab(text: 'Plan'),
+                Tab(text: 'Recommended'),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: BlocBuilder<HomeViewModel, HomeState>(
+        builder: (context, state) {
+          return RefreshIndicator(
+            onRefresh: () async => _refresh(context),
+            child: TabBarView(
+              children: [
+                _HubHomeTab(state: state),
+                _TodaySessionTab(state: state),
+                _WeeklyProgressTab(state: state),
+                _WeeklyPlanTab(state: state),
+                _RecommendationsTab(state: state),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _refresh(BuildContext context) {
+    context.read<HomeViewModel>()
+      ..doIntent(GetTrainingDashboardIntent())
+      ..doIntent(GetTrainingDailySessionIntent())
+      ..doIntent(GetTrainingWeeklyPlanIntent())
+      ..doIntent(GetTrainingRecommendationsIntent())
+      ..doIntent(GetTrainingLessonsIntent());
+  }
+}
+
+class _HubHomeTab extends StatelessWidget {
+  const _HubHomeTab({required this.state});
+
+  final HomeState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final dashboard = state.trainingDashboard.data;
+    return _TrainingScroll(
+      isLoading: state.trainingDashboard.isLoading,
+      error: state.trainingDashboard.errorMessage,
+      children: [
+        _HeroCard(dashboard: dashboard),
+        SizedBox(height: 16.h),
+        _MetricGrid(dashboard: dashboard),
+        SizedBox(height: 18.h),
+        _SectionHeader(
+          title: 'Today session',
+          action: 'Open',
+          onTap: () => DefaultTabController.of(context).animateTo(1),
+        ),
+        SizedBox(height: 10.h),
+        _DailySessionCard(
+          session: state.trainingDailySession.data ?? dashboard?.todaySession,
+        ),
+        SizedBox(height: 18.h),
+        _SectionHeader(
+          title: 'Weekly progress',
+          action: 'Details',
+          onTap: () => DefaultTabController.of(context).animateTo(2),
+        ),
+        SizedBox(height: 10.h),
+        _WeeklyBars(activity: dashboard?.weeklyActivity ?? const []),
+      ],
+    );
+  }
+}
+
+class _TodaySessionTab extends StatelessWidget {
+  const _TodaySessionTab({required this.state});
+
+  final HomeState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final session =
+        state.trainingDailySession.data ??
+        state.trainingDashboard.data?.todaySession;
+    return _TrainingScroll(
+      isLoading: state.trainingDailySession.isLoading,
+      error: state.trainingDailySession.errorMessage,
+      children: [
+        _DailySessionCard(session: session, expanded: true),
+        SizedBox(height: 16.h),
+        _InfoPanel(
+          icon: Icons.local_fire_department_outlined,
+          title: 'Coach note',
+          body: session?.coachNote.isNotEmpty == true
+              ? session!.coachNote
+              : 'Keep your touches clean and finish the session with high focus.',
+        ),
+        SizedBox(height: 16.h),
+        _SessionStats(session: session),
+      ],
+    );
+  }
+}
+
+class _WeeklyProgressTab extends StatelessWidget {
+  const _WeeklyProgressTab({required this.state});
+
+  final HomeState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final dashboard = state.trainingDashboard.data;
+    return _TrainingScroll(
+      isLoading: state.trainingDashboard.isLoading,
+      error: state.trainingDashboard.errorMessage,
+      children: [
+        _ProgressRingCard(dashboard: dashboard),
+        SizedBox(height: 16.h),
+        _WeeklyBars(activity: dashboard?.weeklyActivity ?? const []),
+        SizedBox(height: 16.h),
+        _MetricGrid(dashboard: dashboard),
+      ],
+    );
+  }
+}
+
+class _WeeklyPlanTab extends StatelessWidget {
+  const _WeeklyPlanTab({required this.state});
+
+  final HomeState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final plan = state.trainingWeeklyPlan.data;
+    return _TrainingScroll(
+      isLoading: state.trainingWeeklyPlan.isLoading,
+      error: state.trainingWeeklyPlan.errorMessage,
+      children: [
+        _WeeklyPlanSummary(plan: plan),
+        SizedBox(height: 16.h),
+        ...(plan?.days ?? const <TrainingWeeklyDayEntity>[]).map(
+          (day) => Padding(
+            padding: EdgeInsets.only(bottom: 12.h),
+            child: _WeeklyDayCard(day: day),
+          ),
+        ),
+        if ((plan?.days ?? const []).isEmpty) const _EmptyPanel(),
+      ],
+    );
+  }
+}
+
+class _RecommendationsTab extends StatelessWidget {
+  const _RecommendationsTab({required this.state});
+
+  final HomeState state;
+
+  @override
+  Widget build(BuildContext context) {
+    return _TrainingScroll(
+      isLoading:
+          state.trainingRecommendations.isLoading ||
+          state.speedLessons.isLoading ||
+          state.shootingLessons.isLoading ||
+          state.passingLessons.isLoading,
+      error:
+          state.trainingRecommendations.errorMessage ??
+          state.speedLessons.errorMessage ??
+          state.shootingLessons.errorMessage ??
+          state.passingLessons.errorMessage,
+      children: [
+        _QuickRecommendations(
+          recommendations:
+              state.trainingRecommendations.data ??
+              state.trainingDashboard.data?.quickRecommendations ??
+              const [],
+        ),
+        SizedBox(height: 18.h),
+        _LessonSection(
+          title: 'Speed',
+          icon: Icons.speed_outlined,
+          lessons: state.speedLessons.data,
+          fallbackVideo: TrainingHubView.dailyVideo,
+        ),
+        SizedBox(height: 14.h),
+        _LessonSection(
+          title: 'Shooting',
+          icon: Icons.sports_soccer_outlined,
+          lessons: state.shootingLessons.data,
+          fallbackVideo: TrainingHubView.shootingVideo,
+        ),
+        SizedBox(height: 14.h),
+        _LessonSection(
+          title: 'Passing',
+          icon: Icons.swap_calls_outlined,
+          lessons: state.passingLessons.data,
+          fallbackVideo: TrainingHubView.passingVideo,
+        ),
+      ],
+    );
+  }
+}
+
+class _TrainingScroll extends StatelessWidget {
+  const _TrainingScroll({
+    required this.children,
+    this.isLoading = false,
+    this.error,
+  });
+
+  final List<Widget> children;
+  final bool isLoading;
+  final String? error;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 28.h),
+      children: [
+        if (isLoading) const LinearProgressIndicator(),
+        if (isLoading) SizedBox(height: 14.h),
+        if (error != null && error!.isNotEmpty) ...[
+          _ErrorPanel(message: error!),
+          SizedBox(height: 14.h),
+        ],
+        ...children,
+      ],
+    );
+  }
+}
+
+class _HeroCard extends StatelessWidget {
+  const _HeroCard({required this.dashboard});
 
   final TrainingDashboardEntity? dashboard;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.appTheme;
-    final completed = dashboard?.totalCompletedSessions ?? 0;
-    final minutes = dashboard?.totalTrainingMinutes ?? 0;
-    final streak = dashboard?.currentStreak ?? 0;
-
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(18.w),
       decoration: BoxDecoration(
         color: theme.primary,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(18.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Keep improving',
+            'Hi ${dashboard?.userName.isNotEmpty == true ? dashboard!.userName : 'player'}',
             style: theme.semiBold24.copyWith(color: Colors.white),
           ),
           SizedBox(height: 4.h),
           Text(
-            dashboard?.todaySession?.coachNote.isNotEmpty == true
-                ? dashboard!.todaySession!.coachNote
-                : 'Build your weekly rhythm and finish today strong.',
+            'Level: ${dashboard?.userLevel.isNotEmpty == true ? dashboard!.userLevel : 'Beginner'}',
             style: theme.regular14.copyWith(color: Colors.white70),
           ),
           SizedBox(height: 16.h),
-          Row(
-            children: [
-              _HeroMetric(label: 'Sessions', value: '$completed'),
-              SizedBox(width: 10.w),
-              _HeroMetric(label: 'Minutes', value: '$minutes'),
-              SizedBox(width: 10.w),
-              _HeroMetric(label: 'Streak', value: '$streak'),
-            ],
+          LinearProgressIndicator(
+            value: _safeProgress(
+              (dashboard?.xpProgress ?? 0).toDouble(),
+              (dashboard?.nextLevelXp ?? 100).toDouble(),
+            ),
+            minHeight: 8.h,
+            backgroundColor: Colors.white24,
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            '${dashboard?.xpProgress ?? 0}/${dashboard?.nextLevelXp ?? 0} XP',
+            style: theme.medium14.copyWith(color: Colors.white),
           ),
         ],
       ),
@@ -216,145 +338,36 @@ class _HeroPanel extends StatelessWidget {
   }
 }
 
-class _HeroMetric extends StatelessWidget {
-  const _HeroMetric({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10.h),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.13),
-          borderRadius: BorderRadius.circular(10.r),
-        ),
-        child: Column(
-          children: [
-            Text(
-              value,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(height: 2.h),
-            Text(
-              label,
-              style: TextStyle(color: Colors.white70, fontSize: 11.sp),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _WeeklyProgressCard extends StatelessWidget {
-  const _WeeklyProgressCard({required this.dashboard});
+class _MetricGrid extends StatelessWidget {
+  const _MetricGrid({required this.dashboard});
 
   final TrainingDashboardEntity? dashboard;
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.appTheme;
-    final completed = dashboard?.weeklySessionsCompleted ?? 0;
-    final total = dashboard?.weeklySessionsTotal ?? 0;
-    final progress = total == 0 ? 0.0 : (completed / total).clamp(0.0, 1.0);
-    final activity = dashboard?.weeklyActivity ?? [];
-
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: theme.backgroundColor,
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: theme.borderColor),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text('Weekly Progress', style: theme.semiBold16),
-              const Spacer(),
-              Text(
-                '$completed/$total',
-                style: theme.medium14.copyWith(color: theme.primary),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(99.r),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 10.h,
-              backgroundColor: theme.progressTrack,
-              valueColor: AlwaysStoppedAnimation(theme.primary),
-            ),
-          ),
-          SizedBox(height: 14.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(7, (index) {
-              final label = _dayLabel(index);
-              final xp = _xpForDay(activity, label);
-              return _DayBubble(label: label, active: xp > 0);
-            }),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _dayLabel(int index) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return days[index];
-  }
-
-  int _xpForDay(List<WeeklyActivityEntity> activity, String label) {
-    for (final day in activity) {
-      if (day.dayName.toLowerCase().startsWith(
-        label.substring(0, 2).toLowerCase(),
-      )) {
-        return day.xpEarned;
-      }
-    }
-    return 0;
-  }
-}
-
-class _DayBubble extends StatelessWidget {
-  const _DayBubble({required this.label, required this.active});
-
-  final String label;
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = context.appTheme;
-    final color = theme.primary;
-    return Column(
+    return Row(
       children: [
-        Text(
-          label,
-          style: theme.regular14.copyWith(fontSize: 11.sp, color: theme.subTitle),
-        ),
-        SizedBox(height: 6.h),
-        Container(
-          width: 26.r,
-          height: 26.r,
-          decoration: BoxDecoration(
-            color: active ? color : theme.progressTrack,
-            shape: BoxShape.circle,
+        Expanded(
+          child: _MetricCard(
+            label: 'Sessions',
+            value: '${dashboard?.totalCompletedSessions ?? 0}',
+            icon: Icons.check_circle_outline,
           ),
-          child: Icon(
-            active ? Icons.check : Icons.circle,
-            size: active ? 15.r : 7.r,
-            color: active ? theme.secondary : theme.neutral,
+        ),
+        SizedBox(width: 10.w),
+        Expanded(
+          child: _MetricCard(
+            label: 'Minutes',
+            value: '${dashboard?.totalTrainingMinutes ?? 0}',
+            icon: Icons.timer_outlined,
+          ),
+        ),
+        SizedBox(width: 10.w),
+        Expanded(
+          child: _MetricCard(
+            label: 'Streak',
+            value: '${dashboard?.currentStreak ?? 0}',
+            icon: Icons.bolt_outlined,
           ),
         ),
       ],
@@ -362,59 +375,112 @@ class _DayBubble extends StatelessWidget {
   }
 }
 
-class _LessonCard extends StatelessWidget {
-  const _LessonCard({
-    required this.title,
-    required this.subtitle,
+class _MetricCard extends StatelessWidget {
+  const _MetricCard({
+    required this.label,
+    required this.value,
     required this.icon,
-    required this.onTap,
   });
 
-  final String title;
-  final String subtitle;
-  final String icon;
-  final VoidCallback onTap;
+  final String label;
+  final String value;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.appTheme;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(14.r),
-      child: Container(
-        padding: EdgeInsets.all(14.w),
-        decoration: BoxDecoration(
-          color: theme.accentSurface,
-          borderRadius: BorderRadius.circular(14.r),
-        ),
+    return _Panel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: theme.primary, size: 22.r),
+          SizedBox(height: 8.h),
+          Text(value, style: theme.semiBold24),
+          Text(label, style: theme.regular14.copyWith(color: theme.neutral)),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title, this.action, this.onTap});
+
+  final String title;
+  final String? action;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    return Row(
+      children: [
+        Expanded(child: Text(title, style: theme.semiBold24)),
+        if (action != null) TextButton(onPressed: onTap, child: Text(action!)),
+      ],
+    );
+  }
+}
+
+class _DailySessionCard extends StatelessWidget {
+  const _DailySessionCard({required this.session, this.expanded = false});
+
+  final TodaySessionEntity? session;
+  final bool expanded;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    final title = session?.title.isNotEmpty == true
+        ? session!.title
+        : 'Daily session';
+    final description = session?.description.isNotEmpty == true
+        ? session!.description
+        : 'Your session will appear here when it is ready.';
+    return _Panel(
+      padding: EdgeInsets.zero,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16.r),
+        onTap: session == null
+            ? null
+            : () => _openSession(context, session!, TrainingHubView.dailyVideo),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 38.r,
-              height: 38.r,
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: theme.accentSurfaceStrong,
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-              child: SvgPicture.asset(icon),
+            _Thumb(
+              imageUrl: session?.thumbnailUrl ?? '',
+              height: expanded ? 170.h : 118.h,
+              icon: Icons.play_circle_outline,
             ),
-            SizedBox(height: 12.h),
-            Text(
-              title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: theme.semiBold16,
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              subtitle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.regular14.copyWith(
-                color: theme.subTitle,
-                fontSize: 11.sp,
+            Padding(
+              padding: EdgeInsets.all(14.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(child: Text(title, style: theme.semiBold16)),
+                      _Chip(label: session?.difficulty ?? 'Ready'),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    description,
+                    maxLines: expanded ? 4 : 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.regular14.copyWith(color: theme.neutral),
+                  ),
+                  SizedBox(height: 12.h),
+                  Wrap(
+                    spacing: 8.w,
+                    runSpacing: 8.h,
+                    children: [
+                      _Chip(label: '${session?.durationMinutes ?? 0} min'),
+                      _Chip(label: '${session?.xpReward ?? 0} XP'),
+                      _Chip(label: '${session?.drillsCount ?? 0} drills'),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
@@ -424,86 +490,205 @@ class _LessonCard extends StatelessWidget {
   }
 }
 
-class _DailySessionCard extends StatelessWidget {
-  const _DailySessionCard({required this.session, required this.onTap});
+class _SessionStats extends StatelessWidget {
+  const _SessionStats({required this.session});
 
-  final HomeSessionEntity session;
-  final VoidCallback onTap;
+  final TodaySessionEntity? session;
 
   @override
   Widget build(BuildContext context) {
-    return _SessionShell(
-      title: session.title,
-      subtitle: session.description,
-      duration: '${session.expectedDurationMinutes} min',
-      meta: '${session.drills.length} drills',
-      done: session.isCompleted,
-      onTap: onTap,
+    return Column(
+      children: [
+        _InfoPanel(
+          icon: Icons.fitness_center_outlined,
+          title: 'Session type',
+          body: session?.sessionType.isNotEmpty == true
+              ? session!.sessionType
+              : 'Training',
+        ),
+        SizedBox(height: 12.h),
+        _InfoPanel(
+          icon: Icons.local_fire_department_outlined,
+          title: 'Calories',
+          body: '${session?.estimatedCalories ?? 0} kcal',
+        ),
+      ],
     );
   }
 }
 
-class _TodaySessionCard extends StatelessWidget {
-  const _TodaySessionCard({required this.session, required this.onTap});
+class _ProgressRingCard extends StatelessWidget {
+  const _ProgressRingCard({required this.dashboard});
 
-  final TodaySessionEntity session;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return _SessionShell(
-      title: session.title,
-      subtitle: session.description,
-      duration: '${session.durationMinutes} min',
-      meta: '${session.drillsCount} drills',
-      done: session.status.toLowerCase() == 'completed',
-      onTap: onTap,
-    );
-  }
-}
-
-class _SessionShell extends StatelessWidget {
-  const _SessionShell({
-    required this.title,
-    required this.subtitle,
-    required this.duration,
-    required this.meta,
-    required this.done,
-    required this.onTap,
-  });
-
-  final String title;
-  final String subtitle;
-  final String duration;
-  final String meta;
-  final bool done;
-  final VoidCallback onTap;
+  final TrainingDashboardEntity? dashboard;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.appTheme;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(14.r),
-      child: Container(
-        padding: EdgeInsets.all(14.w),
-        decoration: BoxDecoration(
-          color: theme.backgroundColor,
-          borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(color: theme.borderColor),
-        ),
+    final progress = ((dashboard?.weeklyProgress ?? 0) / 100).clamp(0.0, 1.0);
+    return _Panel(
+      child: Row(
+        children: [
+          SizedBox(
+            width: 86.r,
+            height: 86.r,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CircularProgressIndicator(
+                  value: progress,
+                  strokeWidth: 9,
+                  backgroundColor: theme.progressTrack,
+                  color: theme.primary,
+                ),
+                Text('${(progress * 100).round()}%', style: theme.semiBold16),
+              ],
+            ),
+          ),
+          SizedBox(width: 16.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Weekly progress', style: theme.semiBold24),
+                SizedBox(height: 6.h),
+                Text(
+                  '${dashboard?.weeklySessionsCompleted ?? 0}/${dashboard?.weeklySessionsTotal ?? 0} sessions completed',
+                  style: theme.regular14.copyWith(color: theme.neutral),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WeeklyBars extends StatelessWidget {
+  const _WeeklyBars({required this.activity});
+
+  final List<WeeklyActivityEntity> activity;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    final values = activity.isEmpty ? const <WeeklyActivityEntity>[] : activity;
+    final maxXp = values.fold<int>(1, (max, item) {
+      return item.xpEarned > max ? item.xpEarned : max;
+    });
+    return _Panel(
+      child: SizedBox(
+        height: 150.h,
+        child: values.isEmpty
+            ? const Center(child: Text('No weekly activity yet'))
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: values
+                    .map(
+                      (item) => Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4.w),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: FractionallySizedBox(
+                                    heightFactor: (item.xpEarned / maxXp).clamp(
+                                      0.08,
+                                      1.0,
+                                    ),
+                                    child: Container(
+                                      width: 18.w,
+                                      decoration: BoxDecoration(
+                                        color: theme.primary,
+                                        borderRadius: BorderRadius.circular(
+                                          18.r,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              Text(
+                                item.dayName.length > 3
+                                    ? item.dayName.substring(0, 3)
+                                    : item.dayName,
+                                style: theme.regular14,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+      ),
+    );
+  }
+}
+
+class _WeeklyPlanSummary extends StatelessWidget {
+  const _WeeklyPlanSummary({required this.plan});
+
+  final TrainingWeeklyPlanEntity? plan;
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = ((plan?.completionProgress ?? 0) / 100).clamp(0.0, 1.0);
+    final theme = context.appTheme;
+    return _Panel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Weekly plan', style: theme.semiBold24),
+          SizedBox(height: 8.h),
+          LinearProgressIndicator(
+            value: progress,
+            minHeight: 8.h,
+            borderRadius: BorderRadius.circular(20.r),
+            backgroundColor: theme.progressTrack,
+            color: theme.primary,
+          ),
+          SizedBox(height: 10.h),
+          Text(
+            '${plan?.completedDays ?? 0}/${plan?.totalDays ?? 0} days complete - ${plan?.totalXpEarned ?? 0}/${plan?.totalXpAvailable ?? 0} XP',
+            style: theme.regular14.copyWith(color: theme.neutral),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _WeeklyDayCard extends StatelessWidget {
+  const _WeeklyDayCard({required this.day});
+
+  final TrainingWeeklyDayEntity day;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    final session = day.session;
+    return _Panel(
+      child: InkWell(
+        onTap: session == null
+            ? null
+            : () => _openSession(context, session, TrainingHubView.dailyVideo),
         child: Row(
           children: [
-            Container(
-              width: 44.r,
-              height: 44.r,
-              decoration: BoxDecoration(
-                color: done ? theme.primary : theme.accentSurface,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Icon(
-                done ? Icons.check : Icons.play_arrow_rounded,
-                color: done ? theme.secondary : theme.primary,
+            CircleAvatar(
+              backgroundColor: day.isToday
+                  ? theme.primary
+                  : theme.accentSurface,
+              child: Text(
+                day.dayShort.isNotEmpty ? day.dayShort : day.day.take(2),
+                style: theme.medium14.copyWith(
+                  color: day.isToday ? Colors.white : theme.primary,
+                ),
               ),
             ),
             SizedBox(width: 12.w),
@@ -511,44 +696,338 @@ class _SessionShell extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(day.day, style: theme.semiBold16),
+                  SizedBox(height: 4.h),
                   Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.semiBold16,
+                    day.isRestDay
+                        ? 'Rest day'
+                        : session?.title ?? 'No session assigned',
+                    style: theme.regular14.copyWith(color: theme.neutral),
                   ),
-                  SizedBox(height: 3.h),
-                  Text(
-                    subtitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.regular14.copyWith(
-                      color: theme.subTitle,
-                      fontSize: 12.sp,
+                ],
+              ),
+            ),
+            _Chip(label: day.isCompleted ? 'Done' : '${day.xpEarned} XP'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickRecommendations extends StatelessWidget {
+  const _QuickRecommendations({required this.recommendations});
+
+  final List<QuickRecommendationEntity> recommendations;
+
+  @override
+  Widget build(BuildContext context) {
+    if (recommendations.isEmpty) return const SizedBox.shrink();
+    final theme = context.appTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Coach recommendations', style: theme.semiBold24),
+        SizedBox(height: 10.h),
+        ...recommendations.map(
+          (item) => Padding(
+            padding: EdgeInsets.only(bottom: 10.h),
+            child: _Panel(
+              child: Row(
+                children: [
+                  Icon(Icons.tips_and_updates_outlined, color: theme.primary),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(item.title, style: theme.semiBold16),
+                        SizedBox(height: 3.h),
+                        Text(
+                          item.description,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.regular14.copyWith(color: theme.neutral),
+                        ),
+                      ],
                     ),
                   ),
+                  if (item.xpBonus > 0) _Chip(label: '+${item.xpBonus} XP'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LessonSection extends StatelessWidget {
+  const _LessonSection({
+    required this.title,
+    required this.icon,
+    required this.lessons,
+    required this.fallbackVideo,
+  });
+
+  final String title;
+  final IconData icon;
+  final LessonsListEntity? lessons;
+  final String fallbackVideo;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    final list = lessons?.lessons ?? const <LessonEntity>[];
+    return _Panel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: theme.primary),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: Text(
+                  lessons?.title.isNotEmpty == true ? lessons!.title : title,
+                  style: theme.semiBold24,
+                ),
+              ),
+              _Chip(
+                label:
+                    '${lessons?.completedLessons ?? 0}/${lessons?.totalLessons ?? list.length}',
+              ),
+            ],
+          ),
+          if (lessons?.description.isNotEmpty == true) ...[
+            SizedBox(height: 8.h),
+            Text(
+              lessons!.description,
+              style: theme.regular14.copyWith(color: theme.neutral),
+            ),
+          ],
+          SizedBox(height: 12.h),
+          if (list.isEmpty)
+            _EmptyPanel(message: 'No $title lessons yet')
+          else
+            ...list.map(
+              (lesson) => Padding(
+                padding: EdgeInsets.only(bottom: 10.h),
+                child: _LessonCard(
+                  lesson: lesson,
+                  fallbackVideo: fallbackVideo,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LessonCard extends StatelessWidget {
+  const _LessonCard({required this.lesson, required this.fallbackVideo});
+
+  final LessonEntity lesson;
+  final String fallbackVideo;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    final video = lesson.videoUrl.isNotEmpty ? lesson.videoUrl : fallbackVideo;
+    return InkWell(
+      borderRadius: BorderRadius.circular(14.r),
+      onTap: lesson.isLocked
+          ? null
+          : () => Navigator.pushNamed(
+              context,
+              AppRoutes.sessionView,
+              arguments: TrainingVideoArgs(
+                title: lesson.title,
+                videoUrl: video,
+                description: lesson.description,
+                duration: '${lesson.durationMinutes} min',
+                difficulty: lesson.difficulty,
+                xp: '${lesson.xpReward} XP',
+                coachNote: lesson.coachNote,
+                instructions: lesson.drills
+                    .map(
+                      (e) =>
+                          e.instructions.isNotEmpty ? e.instructions : e.title,
+                    )
+                    .where((e) => e.isNotEmpty)
+                    .toList(),
+              ),
+            ),
+      child: Container(
+        padding: EdgeInsets.all(10.w),
+        decoration: BoxDecoration(
+          color: theme.surfaceMuted,
+          borderRadius: BorderRadius.circular(14.r),
+        ),
+        child: Row(
+          children: [
+            _Thumb(
+              imageUrl: lesson.thumbnailUrl,
+              height: 70.h,
+              width: 86.w,
+              icon: lesson.isLocked ? Icons.lock_outline : Icons.play_arrow,
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(lesson.title, style: theme.semiBold16),
+                  SizedBox(height: 4.h),
+                  Text(
+                    lesson.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.regular14.copyWith(color: theme.neutral),
+                  ),
                   SizedBox(height: 8.h),
-                  Row(
+                  Wrap(
+                    spacing: 6.w,
                     children: [
-                      Icon(Icons.schedule, size: 14.r, color: theme.primary),
-                      SizedBox(width: 4.w),
-                      Text(duration, style: theme.medium14),
-                      SizedBox(width: 12.w),
-                      Icon(
-                        Icons.sports_soccer,
-                        size: 14.r,
-                        color: theme.primary,
-                      ),
-                      SizedBox(width: 4.w),
-                      Text(meta, style: theme.medium14),
+                      _Chip(label: '${lesson.durationMinutes} min'),
+                      _Chip(label: lesson.difficulty),
                     ],
                   ),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: theme.subTitle),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _Panel extends StatelessWidget {
+  const _Panel({required this.child, this.padding});
+
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    return Container(
+      width: double.infinity,
+      padding: padding ?? EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: theme.backgroundColor,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: theme.borderColor),
+      ),
+      child: child,
+    );
+  }
+}
+
+class _Chip extends StatelessWidget {
+  const _Chip({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+      decoration: BoxDecoration(
+        color: theme.accentSurface,
+        borderRadius: BorderRadius.circular(24.r),
+      ),
+      child: Text(
+        label.isNotEmpty ? label : '-',
+        style: theme.medium14.copyWith(color: theme.primary, fontSize: 11.sp),
+      ),
+    );
+  }
+}
+
+class _Thumb extends StatelessWidget {
+  const _Thumb({
+    required this.imageUrl,
+    required this.height,
+    this.width,
+    required this.icon,
+  });
+
+  final String imageUrl;
+  final double height;
+  final double? width;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14.r),
+      child: Container(
+        height: height,
+        width: width ?? double.infinity,
+        color: theme.accentSurface,
+        child: imageUrl.isEmpty
+            ? Icon(icon, color: theme.primary, size: 30.r)
+            : Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        Icon(icon, color: theme.primary, size: 30.r),
+                  ),
+                  Center(
+                    child: CircleAvatar(
+                      backgroundColor: Colors.black.withValues(alpha: 0.45),
+                      child: Icon(icon, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+}
+
+class _InfoPanel extends StatelessWidget {
+  const _InfoPanel({
+    required this.icon,
+    required this.title,
+    required this.body,
+  });
+
+  final IconData icon;
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.appTheme;
+    return _Panel(
+      child: Row(
+        children: [
+          Icon(icon, color: theme.primary),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: theme.semiBold16),
+                SizedBox(height: 4.h),
+                Text(
+                  body,
+                  style: theme.regular14.copyWith(color: theme.neutral),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -561,31 +1040,94 @@ class _ErrorPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: Colors.red.withValues(alpha: 0.08),
+        color: theme.red.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: theme.red.withValues(alpha: 0.25)),
       ),
-      child: Text(message, style: const TextStyle(color: Colors.red)),
+      child: Text(message, style: theme.regular14.copyWith(color: theme.red)),
     );
   }
 }
 
 class _EmptyPanel extends StatelessWidget {
-  const _EmptyPanel();
+  const _EmptyPanel({this.message = 'No data yet'});
+
+  final String message;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.appTheme;
     return Container(
-      padding: EdgeInsets.all(16.w),
+      width: double.infinity,
+      padding: EdgeInsets.all(18.w),
       decoration: BoxDecoration(
-        color: theme.backgroundColor,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: theme.borderColor),
+        color: theme.surfaceMuted,
+        borderRadius: BorderRadius.circular(14.r),
       ),
-      child: Text('home.noSession'.tr(), style: theme.regular16),
+      child: Text(
+        message,
+        style: theme.regular14.copyWith(color: theme.neutral),
+      ),
     );
+  }
+}
+
+void _openSession(
+  BuildContext context,
+  TodaySessionEntity session,
+  String fallbackVideo,
+) {
+  Navigator.pushNamed(
+    context,
+    AppRoutes.sessionView,
+    arguments: TrainingVideoArgs(
+      title: session.title,
+      videoUrl: _extractFirstVideo(session.drills) ?? fallbackVideo,
+      description: session.description,
+      duration: '${session.durationMinutes} min',
+      difficulty: session.difficulty,
+      xp: '${session.xpReward} XP',
+      coachNote: session.coachNote,
+      instructions: _extractInstructions(session.drills),
+    ),
+  );
+}
+
+String? _extractFirstVideo(List<dynamic> drills) {
+  for (final item in drills) {
+    if (item is Map && (item['videoUrl']?.toString().isNotEmpty ?? false)) {
+      return item['videoUrl'].toString();
+    }
+  }
+  return null;
+}
+
+List<String> _extractInstructions(List<dynamic> drills) {
+  final instructions = <String>[];
+  for (final item in drills) {
+    if (item is Map) {
+      final value =
+          item['instructions'] ?? item['title'] ?? item['description'];
+      if (value != null && value.toString().isNotEmpty) {
+        instructions.add(value.toString());
+      }
+    }
+  }
+  return instructions;
+}
+
+double _safeProgress(double value, double total) {
+  if (total <= 0) return 0;
+  return (value / total).clamp(0.0, 1.0);
+}
+
+extension _ShortString on String {
+  String take(int length) {
+    if (isEmpty) return '';
+    return substring(0, this.length < length ? this.length : length);
   }
 }

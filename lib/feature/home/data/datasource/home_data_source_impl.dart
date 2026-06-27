@@ -9,9 +9,10 @@ import 'package:junior_football/feature/home/data/models/request/analysis_ai_req
 import 'package:junior_football/feature/home/data/models/response/analysis_ai_response.dart';
 import 'package:junior_football/feature/home/data/models/response/community_feed.dart';
 import 'package:junior_football/feature/home/data/models/response/upload_video_response.dart';
-import 'package:junior_football/feature/home/data/models/response/weekly_process_response.dart';
 import 'package:junior_football/feature/home/data/models/response/full_weekly_plan_response.dart';
 import 'package:junior_football/feature/home/data/models/response/training_dashboard.dart';
+import 'package:junior_football/feature/home/data/models/response/training_lesson_response.dart';
+import 'package:junior_football/feature/home/data/models/response/training_weekly_plan_response.dart';
 
 @LazySingleton(as: HomeDataSource)
 class HomeDataSourceImpl implements HomeDataSource {
@@ -38,9 +39,8 @@ class HomeDataSourceImpl implements HomeDataSource {
   );
 
   @override
-  Future<Result<List<CommunityFeedResponse>>> getCommunityFeed() => executeApi(
-    () => _apiClient.getCommunityFeed(),
-  );
+  Future<Result<List<CommunityFeedResponse>>> getCommunityFeed() =>
+      executeApi(() => _apiClient.getCommunityFeed());
 
   // @override
   // Future<Result<WeeklyProcessResponse>> getWeeklyPlan() => executeApi(
@@ -48,12 +48,34 @@ class HomeDataSourceImpl implements HomeDataSource {
   // );
 
   @override
-  Future<Result<TrainingDashboard>> getTrainingDashboard() => executeApi(
-    () => _apiClient.getTrainingDashboard(),
-  );
+  Future<Result<TrainingDashboard>> getTrainingDashboard() =>
+      executeApi(() => _apiClient.getTrainingDashboard());
 
   @override
-  Future<Result<List<FullWeeklyPlanResponse>>> getFullWeeklyPlan() => executeApi(
-    () => _apiClient.getFullWeeklyPlan(),
-  );
+  Future<Result<List<FullWeeklyPlanResponse>>> getFullWeeklyPlan() =>
+      executeApi(() => _apiClient.getFullWeeklyPlan());
+
+  @override
+  Future<Result<TrainingWeeklyPlanResponse>> getTrainingWeeklyPlan() =>
+      executeApi(() => _apiClient.getTrainingWeeklyPlan());
+
+  @override
+  Future<Result<TodaySession>> getTrainingDailySession() =>
+      executeApi(() => _apiClient.getTrainingDailySession());
+
+  @override
+  Future<Result<List<QuickRecommendations>>> getTrainingRecommendations() =>
+      executeApi(() => _apiClient.getTrainingRecommendations());
+
+  @override
+  Future<Result<LessonsListResponse>> getSpeedLessons() =>
+      executeApi(() => _apiClient.getSpeedLessons());
+
+  @override
+  Future<Result<LessonsListResponse>> getShootingLessons() =>
+      executeApi(() => _apiClient.getShootingLessons());
+
+  @override
+  Future<Result<LessonsListResponse>> getPassingLessons() =>
+      executeApi(() => _apiClient.getPassingLessons());
 }

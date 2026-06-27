@@ -46,12 +46,14 @@
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 		<key>UIStatusBarHidden</key>
-		<false/>
+		<true/>
 		<key>NSCameraUsageDescription</key>
-        <string>Need camera access</string>
-        <key>NSMicrophoneUsageDescription</key>
-        <string>Need microphone access</string>
-        <key>NSPhotoLibraryUsageDescription</key>
-        <string>Need photo library access to save and access your training videos</string>
+		<string>Need camera access</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Need microphone access</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Need photo library access to save and access your training videos</string>
+		<key>UIViewControllerBasedStatusBarAppearance</key>
+		<false/>
 	</dict>
 </plist>

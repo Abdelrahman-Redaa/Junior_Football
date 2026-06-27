@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:junior_football/core/constants/app_assets.dart';
 import 'package:junior_football/core/routes/routes_name.dart';
 import 'package:junior_football/core/utilities//theme_extension.dart';
 import 'package:junior_football/core/utilities/show_toast_message.dart';
@@ -11,6 +10,7 @@ import 'package:junior_football/feature/auth/presentation/view_model/auth_state.
 import 'package:junior_football/feature/auth/presentation/view_model/auth_view_model.dart';
 import 'package:junior_football/feature/auth/presentation/widgets/custom_rich_text.dart';
 import 'package:junior_football/feature/auth/presentation/widgets/login_with_google.dart';
+import 'package:junior_football/feature/auth/presentation/widgets/welcome_hero_animation.dart';
 
 class WelcomeView extends StatefulWidget {
   const WelcomeView({super.key});
@@ -66,18 +66,18 @@ class _WelcomeViewState extends State<WelcomeView> {
       child: Column(
         children: [
           VerticalSpace(107),
-          Image.asset(AppAssets.ball),
+          const WelcomeBallAnimation(),
           VerticalSpace(16),
           Text(
             'welcome.welcomeTo'.tr(),
-            style: theme.regular18.copyWith(color: Color(0xFF5F5F5F)),
+            style: theme.regular18.copyWith(color: theme.subTitle),
           ),
           VerticalSpace(16),
           Text(
             'welcome.appName'.tr(),
             style: theme.regular24.copyWith(fontSize: 32),
           ),
-          SizedBox(child: Image.asset(AppAssets.player)),
+          const WelcomePlayerAnimation(),
           VerticalSpace(16),
           ElevatedButton(
             onPressed: () {

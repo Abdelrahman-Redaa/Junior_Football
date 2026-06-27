@@ -19,7 +19,13 @@ final class EndPoint {
   static const String likePost = "/api/Post/{postId}/like";
   static const String commentPost = "/api/Post/{postId}/comment";
   static const String deletePost = "/api/post/{postId}";
-  static const String trainingDashboard = "/api/Training/dashboard";
+  static const String trainingDashboard = "/api/training/dashboard";
+  static const String trainingWeeklyPlan = "/api/training/weekly-plan";
+  static const String trainingDailySession = "/api/training/daily-session";
+  static const String trainingRecommendations = "/api/training/recommendations";
+  static const String speedLessons = "/api/training/speed-lessons";
+  static const String shootingLessons = "/api/training/shooting-lessons";
+  static const String passingLessons = "/api/training/passing-lessons";
   static const String fullWeeklyPlan = "/api/WeeklyPlan/full-plan";
   static const String createPost = "/api/Post";
   static const String userProfile = "/api/UserProfile";
@@ -29,5 +35,6 @@ final class EndPoint {
   static const String followUser = "/api/userprofile/{userId}/follow";
   static const String unfollowUser = "/api/userprofile/{userId}/unfollow";
   static const String uploadFileVideo = "/api/file/upload-video";
-  static const String uploadProfileVideoEndpoint = "/api/UserProfile/upload-video";
+  static const String uploadProfileVideoEndpoint =
+      "/api/UserProfile/upload-video";
 }

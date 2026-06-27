@@ -3,21 +3,28 @@ import 'package:junior_football/feature/home/data/models/request/analysis_ai_req
 import 'package:junior_football/feature/home/domain/entity/analysis_ai_response_entity.dart';
 import 'package:junior_football/feature/home/domain/entity/community_feed_entity.dart';
 import 'package:junior_football/feature/home/domain/entity/upload_video_entity.dart';
-import 'package:junior_football/feature/home/domain/entity/weekly_plan_entity.dart';
 import 'package:junior_football/feature/home/domain/entity/full_weekly_plan_entity.dart';
+import 'package:junior_football/feature/home/domain/entity/training_lesson_entity.dart';
 import 'package:junior_football/feature/home/domain/entity/training_dashboard_entity.dart';
+import 'package:junior_football/feature/home/domain/entity/training_weekly_plan_entity.dart';
 
 abstract interface class HomeRepo {
   Future<Result<UploadVideoEntity>> uploadVideo(
-      String path,
-      void Function(int sent, int total)? onProgress,
-      );
+    String path,
+    void Function(int sent, int total)? onProgress,
+  );
   Future<Result<AnalysisEntity>> analysisAiVideo(
     AnalysisAiRequest analysisRequest,
-      void Function(int sent, int total)? onProgress,
+    void Function(int sent, int total)? onProgress,
   );
   Future<Result<List<CommunityFeedEntity>>> getCommunityFeed();
   //Future<Result<WeeklyPlanEntity>> getWeeklyPlan();
   Future<Result<TrainingDashboardEntity>> getTrainingDashboard();
   Future<Result<List<FullWeeklyPlanEntity>>> getFullWeeklyPlan();
+  Future<Result<TrainingWeeklyPlanEntity>> getTrainingWeeklyPlan();
+  Future<Result<TodaySessionEntity>> getTrainingDailySession();
+  Future<Result<List<QuickRecommendationEntity>>> getTrainingRecommendations();
+  Future<Result<LessonsListEntity>> getSpeedLessons();
+  Future<Result<LessonsListEntity>> getShootingLessons();
+  Future<Result<LessonsListEntity>> getPassingLessons();
 }
